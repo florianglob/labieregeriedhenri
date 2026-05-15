@@ -25,7 +25,18 @@ export default async function Home() {
           <div className="hero-text">
             <div className="hero-eyebrow">
               <span className="dot" />
-              Mar–Ven 10h–14h · 16h30–21h · Sam 16h–00h
+              {(() => {
+                const open = D.horaires.filter(h => !h.closed);
+                const groups: { jours: string[]; hr: string }[] = [];
+                for (const h of open) {
+                  const last = groups[groups.length - 1];
+                  if (last && last.hr === h.hr) last.jours.push(h.jour.slice(0, 3));
+                  else groups.push({ jours: [h.jour.slice(0, 3)], hr: h.hr });
+                }
+                return groups.map(g =>
+                  `${g.jours.length > 1 ? `${g.jours[0]}–${g.jours[g.jours.length - 1]}` : g.jours[0]} ${g.hr}`
+                ).join(" · ");
+              })()}
             </div>
             <h1>
               <span className="line">La Bièregerie</span>
