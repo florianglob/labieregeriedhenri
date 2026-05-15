@@ -41,7 +41,7 @@ export default function Nav({ active }: { active?: string }) {
           ))}
         </div>
 
-        <Link href="/contact#reserver" className="btn btn-primary btn-sm">
+        <Link href="/contact#reserver" className="btn btn-primary btn-sm nav-cta">
           Réserver une table <span className="arrow">→</span>
         </Link>
 

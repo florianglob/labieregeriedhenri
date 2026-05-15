@@ -78,6 +78,7 @@ export default function AdminPage() {
   const [saved, setSaved] = useState(false);
   const [seeding, setSeeding] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     loadAdminData()
@@ -140,8 +141,11 @@ export default function AdminPage() {
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "var(--papier)" }}>
+      {/* Overlay mobile */}
+      <div className={`admin-overlay${sidebarOpen ? " open" : ""}`} onClick={() => setSidebarOpen(false)} />
+
       {/* Sidebar */}
-      <aside style={{
+      <aside className={`admin-sidebar${sidebarOpen ? " open" : ""}`} style={{
         width: 220, background: "var(--brun-dark)", color: "var(--craie)",
         position: "fixed", top: 0, left: 0, bottom: 0,
         display: "flex", flexDirection: "column", zIndex: 10,
@@ -156,7 +160,7 @@ export default function AdminPage() {
           {navItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => setSection(item.id)}
+              onClick={() => { setSection(item.id); setSidebarOpen(false); }}
               style={{
                 display: "block", width: "100%", textAlign: "left",
                 padding: "11px 20px", border: "none", cursor: "pointer",
@@ -190,18 +194,29 @@ export default function AdminPage() {
       </aside>
 
       {/* Main */}
-      <main style={{ marginLeft: 220, flex: 1 }}>
+      <main className="admin-main" style={{ marginLeft: 220, flex: 1, minWidth: 0 }}>
         {/* Topbar */}
-        <div style={{
+        <div className="admin-topbar" style={{
           position: "sticky", top: 0, zIndex: 9,
           background: "rgba(251,248,241,0.95)", backdropFilter: "blur(10px)",
           borderBottom: "1px solid rgba(91,58,30,0.08)",
           padding: "16px 36px", display: "flex", alignItems: "center", justifyContent: "space-between",
+          gap: 12,
         }}>
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: 24, color: "var(--brun)", margin: 0 }}>
-            {navItems.find((n) => n.id === section)?.label}
-          </h1>
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <button
+              className="admin-mob-toggle nav-burger"
+              style={{ display: "none" }}
+              onClick={() => setSidebarOpen((o) => !o)}
+              aria-label="Menu"
+            >
+              <span /><span /><span />
+            </button>
+            <h1 style={{ fontFamily: "var(--font-display)", fontSize: 22, color: "var(--brun)", margin: 0 }}>
+              {navItems.find((n) => n.id === section)?.label}
+            </h1>
+          </div>
+          <div style={{ display: "flex", gap: 12, alignItems: "center", flexShrink: 0 }}>
             {saved && <span style={{ color: "#2BB673", fontSize: 13, fontWeight: 600 }}>✓ Sauvegardé</span>}
             {error && <span style={{ color: "#C25A3F", fontSize: 13 }}>{error}</span>}
             <button
@@ -220,11 +235,11 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div style={{ padding: 36 }}>
+        <div className="admin-content" style={{ padding: 36 }}>
           {/* Dashboard */}
           {section === "dashboard" && (
             <div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20, marginBottom: 32 }}>
+              <div className="admin-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20, marginBottom: 32 }}>
                 {[
                   { label: "Bières en carte",      val: data.bieres.length },
                   { label: "Événements à venir",   val: data.evenementsAvenir.length },
