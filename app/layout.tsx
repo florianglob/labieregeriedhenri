@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://labieregeriedhenri.fr"),
   title: "La Bièregerie d'Henri · Bières, Vins & Afterworks",
   description:
     "Bar à bières, cave-épicerie fine et afterworks. Carte renouvelée, menu de la semaine, location de tireuse 2 becs et événements. Mortagne-sur-Sèvre.",
@@ -9,6 +10,21 @@ export const metadata: Metadata = {
     title: "La Bièregerie d'Henri",
     description: "Bières, Vins & Afterworks — Mortagne-sur-Sèvre",
     type: "website",
+    url: "https://labieregeriedhenri.fr",
+    images: [
+      {
+        url: "/assets/logo.png",
+        width: 512,
+        height: 512,
+        alt: "La Bièregerie d'Henri",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "La Bièregerie d'Henri",
+    description: "Bières, Vins & Afterworks — Mortagne-sur-Sèvre",
+    images: ["/assets/logo.png"],
   },
 };
 
