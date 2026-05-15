@@ -13,10 +13,10 @@ export const metadata: Metadata = {
     url: "https://labieregeriedhenri.fr",
     images: [
       {
-        url: "/assets/logo.png",
-        width: 512,
-        height: 512,
-        alt: "La Bièregerie d'Henri",
+        url: "https://xfvbtgaevgconvohqjol.supabase.co/storage/v1/object/public/photos/site/1778805769954.jpg",
+        width: 1200,
+        height: 630,
+        alt: "La Bièregerie d'Henri — Bières, Vins & Afterworks à Mortagne-sur-Sèvre",
       },
     ],
   },
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "La Bièregerie d'Henri",
     description: "Bières, Vins & Afterworks — Mortagne-sur-Sèvre",
-    images: ["/assets/logo.png"],
+    images: ["https://xfvbtgaevgconvohqjol.supabase.co/storage/v1/object/public/photos/site/1778805769954.jpg"],
   },
 };
 
