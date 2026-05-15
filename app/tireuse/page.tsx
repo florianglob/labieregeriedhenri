@@ -13,14 +13,33 @@ export default function TireusePage() {
   const [activeStyle, setActiveStyle] = useState("all");
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [devisError, setDevisError] = useState("");
 
   const futStyles = ["all", ...Array.from(new Set(D.futsDisponibles.map((f) => f.style)))];
   const filteredFuts = activeStyle === "all" ? D.futsDisponibles : D.futsDisponibles.filter((f) => f.style === activeStyle);
 
-  function handleDevis(e: React.FormEvent) {
+  async function handleDevis(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSending(true);
-    setTimeout(() => { setSending(false); setSent(true); }, 800);
+    setSending(true); setDevisError("");
+    const fd = new FormData(e.currentTarget);
+    const res = await fetch("/api/devis", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        prenom:  fd.get("prenom"),
+        nom:     fd.get("nom"),
+        email:   fd.get("email"),
+        tel:     fd.get("tel"),
+        date:    fd.get("date"),
+        forfait: fd.get("forfait"),
+        invites: fd.get("invites"),
+        duree:   fd.get("duree"),
+        message: fd.get("message"),
+      }),
+    });
+    setSending(false);
+    if (res.ok) setSent(true);
+    else setDevisError("Erreur lors de l'envoi. Appelle-nous directement.");
   }
 
   return (
@@ -104,7 +123,8 @@ export default function TireusePage() {
           </div>
 
           <div style={{ marginTop: 28, background: "#fff", borderRadius: "var(--radius-lg)", overflow: "hidden", border: "1px solid rgba(91,58,30,0.08)" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 560 }}>
               <thead>
                 <tr style={{ background: "var(--brun-dark)", color: "var(--craie)" }}>
                   <th style={{ padding: "14px 20px", textAlign: "left", fontFamily: "var(--font-display)", fontWeight: 400, fontSize: 14 }}>Bière</th>
@@ -140,6 +160,7 @@ export default function TireusePage() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       </section>
@@ -166,7 +187,7 @@ export default function TireusePage() {
       {/* Formulaire de devis */}
       <section id="devis" style={{ background: "var(--brun-dark)", paddingBottom: 88 }}>
         <div className="wrap">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 48, alignItems: "start" }}>
+          <div className="duo-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 48, alignItems: "start" }}>
             <div>
               <span className="eyebrow" style={{ color: "var(--dore)" }}>Devis gratuit</span>
               <h2 style={{ marginTop: 14, color: "var(--craie)" }}>
@@ -201,27 +222,27 @@ export default function TireusePage() {
                   <div className="form-grid">
                     <div className="field">
                       <label>Prénom</label>
-                      <input type="text" required placeholder="Henri" />
+                      <input name="prenom" type="text" required placeholder="Henri" />
                     </div>
                     <div className="field">
                       <label>Nom</label>
-                      <input type="text" required placeholder="Dupont" />
+                      <input name="nom" type="text" required placeholder="Dupont" />
                     </div>
                     <div className="field">
                       <label>Email</label>
-                      <input type="email" required placeholder="ton@mail.fr" />
+                      <input name="email" type="email" required placeholder="ton@mail.fr" />
                     </div>
                     <div className="field">
                       <label>Téléphone</label>
-                      <input type="tel" required placeholder="06 12 34 56 78" />
+                      <input name="tel" type="tel" required placeholder="06 12 34 56 78" />
                     </div>
                     <div className="field">
                       <label>Date de l&apos;événement</label>
-                      <input type="date" required />
+                      <input name="date" type="date" required />
                     </div>
                     <div className="field">
                       <label>Forfait souhaité</label>
-                      <select>
+                      <select name="forfait">
                         <option>Week-end</option>
                         <option>Semaine</option>
                         <option>Événement (+100 pers.)</option>
@@ -229,11 +250,11 @@ export default function TireusePage() {
                     </div>
                     <div className="field">
                       <label>Nombre d&apos;invités</label>
-                      <input type="number" min="1" placeholder="ex : 50" />
+                      <input name="invites" type="number" min="1" placeholder="ex : 50" />
                     </div>
                     <div className="field">
                       <label>Durée</label>
-                      <select>
+                      <select name="duree">
                         <option>Week-end (ven → dim)</option>
                         <option>Une semaine</option>
                         <option>Plus longtemps</option>
@@ -241,9 +262,10 @@ export default function TireusePage() {
                     </div>
                     <div className="field full">
                       <label>Message</label>
-                      <textarea placeholder="Des infos utiles : type d'événement, lieu, bières souhaitées..." />
+                      <textarea name="message" placeholder="Des infos utiles : type d'événement, lieu, bières souhaitées..." />
                     </div>
                   </div>
+                  {devisError && <p style={{ color: "#C25A3F", marginTop: 12, fontSize: 14 }}>{devisError}</p>}
                   <button
                     type="submit"
                     className="btn btn-primary"

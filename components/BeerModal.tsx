@@ -13,7 +13,8 @@ interface Props {
 export default function BeerModal({ beer, data, onClose }: Props) {
   const d = beerDetails(beer, data);
   const prices = allPrices(beer);
-  const lvl = ibuLevel(d.ibu);
+  const amertumePct = d.amertume?.pct ?? ibuLevel(d.ibu);
+  const amertumeLabelStr = d.amertume?.label ?? null;
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -102,17 +103,20 @@ export default function BeerModal({ beer, data, onClose }: Props) {
               </div>
             </div>
 
-            {/* IBU bar */}
-            {lvl != null && (
+            {/* Amertume bar */}
+            {amertumePct != null && (
               <div className="bm-bar">
+                {amertumeLabelStr && (
+                  <div className="bm-bar-label">{amertumeLabelStr}</div>
+                )}
                 <div className="bm-bar-track">
                   <div
                     className="bm-bar-fill"
-                    style={{ left: `${lvl}%`, right: 0 }}
+                    style={{ left: `${amertumePct}%`, right: 0 }}
                   />
                   <div
                     className="bm-bar-cursor"
-                    style={{ left: `${lvl}%` }}
+                    style={{ left: `${amertumePct}%` }}
                   />
                 </div>
                 <div className="bm-bar-scale">
@@ -191,9 +195,6 @@ export default function BeerModal({ beer, data, onClose }: Props) {
 
             <div className="bm-footer">
               <span className="script script-sm">à découvrir au comptoir</span>
-              <a href="/contact#reserver" className="btn btn-primary btn-sm">
-                Réserver une table <span className="arrow">→</span>
-              </a>
             </div>
           </div>
         </div>

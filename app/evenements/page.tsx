@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import { BASE_DATA, SiteData } from "@/lib/data";
+import EventModal from "@/components/EventModal";
+import { BASE_DATA, SiteData, Evenement } from "@/lib/data";
 import { loadAdminData } from "@/lib/supabase";
 
 const MONTHS = ["Mai 2026", "Juin 2026"];
@@ -14,6 +15,7 @@ export default function EvenementsPage() {
   useEffect(() => { loadAdminData().then(setD).catch(() => {}); }, []);
   const [activeTag, setActiveTag] = useState("Toutes");
   const [monthIdx, setMonthIdx] = useState(0);
+  const [selected, setSelected] = useState<Evenement | null>(null);
 
   const allTags = ["Toutes", ...Array.from(new Set(D.evenementsAvenir.map((e) => e.tag)))];
 
@@ -91,7 +93,13 @@ export default function EvenementsPage() {
               </div>
             ) : (
               filtered.map((e) => (
-                <div key={e.id} id={`ev-${e.id}`} className="event-card" style={{ cursor: "default" }}>
+                <div
+                  key={e.id}
+                  id={`ev-${e.id}`}
+                  className="event-card"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setSelected(e)}
+                >
                   <div className="img">
                     <span className="tag">{e.tag}</span>
                     <span className="date">
@@ -115,12 +123,12 @@ export default function EvenementsPage() {
                     <div className="meta-line">
                       <span>● {e.heure}</span>
                     </div>
-                    <p style={{ fontSize: 14, color: "var(--encre-soft)", margin: "8px 0 12px" }}>
+                    <p style={{ fontSize: 14, color: "var(--encre-soft)", margin: "8px 0 12px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                       {e.desc}
                     </p>
-                    <a href="/contact" className="btn btn-primary btn-sm">
-                      Je viens <span className="arrow">→</span>
-                    </a>
+                    <button className="btn btn-primary btn-sm" onClick={(ev) => { ev.stopPropagation(); setSelected(e); }}>
+                      En savoir plus <span className="arrow">→</span>
+                    </button>
                   </div>
                 </div>
               ))
@@ -132,7 +140,7 @@ export default function EvenementsPage() {
       {/* Newsletter */}
       <section style={{ background: "var(--brun-dark)" }}>
         <div className="wrap">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
+          <div className="duo-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
             <div>
               <span className="eyebrow" style={{ color: "var(--dore)" }}>La gazette d&apos;Henri</span>
               <h2 style={{ marginTop: 14, color: "var(--craie)" }}>
@@ -173,6 +181,8 @@ export default function EvenementsPage() {
           </div>
         </div>
       </section>
+
+      {selected && <EventModal event={selected} onClose={() => setSelected(null)} />}
 
       <Footer data={D} />
     </>

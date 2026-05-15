@@ -8,12 +8,57 @@ import { loadAdminData } from "@/lib/supabase";
 
 export const revalidate = 60;
 
+function semaineLabel(): string {
+  const now = new Date();
+  const day = now.getDay(); // 0=dim, 1=lun, ...
+  const diffToMon = (day === 0 ? -6 : 1 - day);
+  const mon = new Date(now);
+  mon.setDate(now.getDate() + diffToMon);
+  const sat = new Date(mon);
+  sat.setDate(mon.getDate() + 5);
+  const fmt = (d: Date) =>
+    d.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+  const monStr = mon.toLocaleDateString("fr-FR", { day: "numeric" });
+  const satFull = fmt(sat);
+  return `Semaine du ${monStr} au ${satFull}`;
+}
+
+function buildStrip(D: typeof BASE_DATA): string[] {
+  const items: string[] = [];
+
+  // Bière du moment
+  items.push(`BIÈRE DU MOMENT · ${D.biereDuMoment.nom} · ${D.biereDuMoment.prix}`);
+
+  // Menu de la semaine — formule complète
+  const complet = D.menuSemaine.formules.find((f) => f.nom.toLowerCase().includes("complet"));
+  if (complet) items.push(`LE MIDI · ${complet.nom} à ${complet.prix} · Mar. au Ven. 12h–14h`);
+
+  // Événements à venir (3 max)
+  D.evenementsAvenir.slice(0, 3).forEach((e) => {
+    items.push(`${e.tag.toUpperCase()} · ${e.titre} · ${e.jour} ${e.mois} à ${e.heure}`);
+  });
+
+  // Horaires — premier et dernier jour ouvert
+  const ouverts = D.horaires.filter((h) => !h.closed);
+  if (ouverts.length > 0) {
+    const premier = ouverts[0].jour.slice(0, 3) + ".";
+    const dernier = ouverts[ouverts.length - 1].jour.slice(0, 3) + ".";
+    items.push(`OUVERT · Du ${premier} au ${dernier} · Midi & soir`);
+  }
+
+  // Localisation
+  items.push(`OÙ NOUS TROUVER · ${D.contact.adresse.ligne1} · ${D.contact.adresse.ligne2}`);
+
+  return items;
+}
+
 export default async function Home() {
   const D = await loadAdminData().catch(() => BASE_DATA);
   const m = D.menuSemaine;
   const e0 = m.entrees[0] ?? { nom: "", prix: "" };
   const p0 = m.plats[0] ?? { nom: "", desc: "", prix: "" };
   const d0 = m.desserts[0] ?? { nom: "", prix: "" };
+  const stripItems = buildStrip(D);
 
   return (
     <>
@@ -54,22 +99,22 @@ export default async function Home() {
               <Link href="/bieres" className="btn btn-primary">
                 Voir la carte des bières <span className="arrow">→</span>
               </Link>
-              <Link href="/contact#reserver" className="btn btn-secondary">
-                Réserver une table
+              <Link href="/midi" className="btn btn-secondary">
+                Voir le menu du midi
               </Link>
             </div>
             <div className="hero-stats">
               <div className="hero-stat">
                 <div className="num">Pression<br />Canette<br />Bouteille</div>
-                <div className="lbl">au comptoir &amp; à emporter</div>
+                <div className="lbl">Faites votre choix</div>
               </div>
               <div className="hero-stat">
                 <div className="num">Brasseries<br />du coin</div>
-                <div className="lbl">Pays de la Loire · Bretagne</div>
+                <div className="lbl">D&apos;ici et d&apos;ailleurs</div>
               </div>
               <div className="hero-stat">
                 <div className="num">Tireuse<br />2 becs</div>
-                <div className="lbl">à retirer sur place</div>
+                <div className="lbl">Selon disponibilité</div>
               </div>
             </div>
           </div>
@@ -100,21 +145,19 @@ export default async function Home() {
       {/* ===== MARQUEE ===== */}
       <div className="strip">
         <div className="strip-inner">
-          <span>
-            <strong>JEUDI · Apéro brasseur</strong> <span className="dot" />
-            <strong>VENDREDI · Soirée jusqu&apos;à minuit</strong> <span className="dot" />
-            <strong>SAMEDI · Service du soir 16h–00h</strong> <span className="dot" />
-            <strong>NOUVELLE BIÈRE · Hazy Coast en pression</strong> <span className="dot" />
-            <strong>JEUDI · Apéro brasseur</strong> <span className="dot" />
-            <strong>VENDREDI · Soirée jusqu&apos;à minuit</strong> <span className="dot" />
-            <strong>SAMEDI · Service du soir 16h–00h</strong> <span className="dot" />
-            <strong>NOUVELLE BIÈRE · Hazy Coast en pression</strong> <span className="dot" />
-          </span>
+          {/* Doublé pour le défilement continu */}
+          {[0, 1].map((pass) => (
+            <span key={pass} aria-hidden={pass === 1}>
+              {stripItems.map((item, i) => (
+                <span key={i}><strong>{item}</strong> <span className="dot" /></span>
+              ))}
+            </span>
+          ))}
         </div>
       </div>
 
       {/* ===== BIÈRE DU MOMENT ===== */}
-      <section className="tight">
+      <section className="tight mob-hide">
         <div className="wrap">
           <div className="feature-bar">
             <div className="fb-bottle">capsule</div>
@@ -136,7 +179,7 @@ export default async function Home() {
               className="btn btn-secondary"
               style={{ background: "var(--brun-dark)", color: "var(--dore)", borderColor: "var(--brun-dark)" }}
             >
-              La goûter <span className="arrow">→</span>
+              Voir toutes nos bières <span className="arrow">→</span>
             </Link>
           </div>
         </div>
@@ -155,7 +198,7 @@ export default async function Home() {
               </h2>
               <p className="lead">
                 Une bonne moitié de brasseries du coin, le reste pioché chez les copains
-                belges, anglais et tchèques. Pas de prise de tête : si tu hésites, on te
+                belges, anglais et allemands. Pas de prise de tête : si tu hésites, on te
                 fait goûter.
               </p>
             </div>
@@ -222,10 +265,13 @@ export default async function Home() {
         <div className="wrap">
           <div className="section-head">
             <div className="left">
-              <span className="eyebrow">Le midi · La tireuse</span>
+              <span className="eyebrow mob-hide">Le midi · La tireuse</span>
+              <span className="eyebrow desk-hide">Le menu du midi</span>
               <h2 style={{ marginTop: 14 }}>
-                Deux bonnes raisons{" "}
-                <span className="scripted" style={{ fontSize: 58 }}>de revenir</span>
+                <span className="mob-hide">Deux bonnes raisons{" "}
+                <span className="scripted" style={{ fontSize: 58 }}>de revenir</span></span>
+                <span className="desk-hide">Ce midi,{" "}
+                <span className="scripted" style={{ fontSize: 58 }}>qu&apos;est-ce qu&apos;on mange ?</span></span>
               </h2>
             </div>
           </div>
@@ -233,33 +279,8 @@ export default async function Home() {
           <div className="split">
             {/* Ardoise du midi */}
             <div className="chalkboard">
-              <div className="chalk-title">{m.semaine}</div>
+              <div className="chalk-title">{semaineLabel()}</div>
               <div className="chalk-sub">— servi de 12h à 14h · du mardi au vendredi —</div>
-
-              <div className="chalk-row">
-                <span className="name">
-                  {e0.nom}
-                  <span className="small">EN ENTRÉE</span>
-                </span>
-                <span className="dots" />
-                <span className="price">{e0.prix}</span>
-              </div>
-              <div className="chalk-row">
-                <span className="name">
-                  {p0.nom}
-                  <span className="small">★ PIÈCE DU BOUCHER</span>
-                </span>
-                <span className="dots" />
-                <span className="price">{p0.prix}</span>
-              </div>
-              <div className="chalk-row">
-                <span className="name">
-                  {d0.nom}
-                  <span className="small">EN DESSERT</span>
-                </span>
-                <span className="dots" />
-                <span className="price">{d0.prix}</span>
-              </div>
 
               <div className="chalk-divider" />
               {m.formules.map((f) => (
@@ -270,10 +291,6 @@ export default async function Home() {
                 </div>
               ))}
 
-              <div style={{ textAlign: "center", marginTop: 22, fontSize: 18, opacity: 0.85 }}>
-                ↳ Accord de la semaine :{" "}
-                <span style={{ color: "var(--dore)" }}>{m.accord.nom}</span>
-              </div>
               <div style={{ textAlign: "center", marginTop: 18 }}>
                 <Link href="/midi" className="btn btn-primary btn-sm">
                   Le menu en entier <span className="arrow">→</span>
@@ -282,7 +299,7 @@ export default async function Home() {
             </div>
 
             {/* Forfaits tireuse */}
-            <div className="formules">
+            <div className="formules mob-hide">
               <span className="tag-line">Tireuse 2 becs · à retirer chez nous</span>
               <h3>La pression à emporter</h3>
               <p style={{ color: "var(--encre-soft)", margin: "12px 0 4px" }}>

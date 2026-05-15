@@ -4,6 +4,7 @@ export type Style = "blonde" | "ambree" | "ipa" | "brune" | "blanche" | "sour" |
 export interface BeerDetails {
   ibu?: number;
   ebc?: number;
+  amertume?: { label: string; pct: number };
   houblons?: string;
   malts?: string;
   fermentation?: string;
@@ -137,7 +138,7 @@ export const BASE_DATA: SiteData = {
     nom: "La Bièregerie d'Henri",
     tagline: "Bières, Vins & Afterworks",
     tel: "02 51 57 86 09",
-    email: "salut@bieregerie-henri.fr",
+    email: "contact@labieregeriedhenri.fr",
     adresse: {
       ligne1: "53 Route de Poitiers",
       ligne2: "85290 Mortagne-sur-Sèvre",

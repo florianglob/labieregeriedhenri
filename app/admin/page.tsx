@@ -79,6 +79,7 @@ export default function AdminPage() {
   const [seeding, setSeeding] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
 
   useEffect(() => {
     loadAdminData()
@@ -141,99 +142,105 @@ export default function AdminPage() {
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "var(--papier)" }}>
-      {/* Overlay mobile */}
-      <div className={`admin-overlay${sidebarOpen ? " open" : ""}`} onClick={() => setSidebarOpen(false)} />
-
-      {/* Sidebar */}
-      <aside className={`admin-sidebar${sidebarOpen ? " open" : ""}`} style={{
+      {/* ── Sidebar desktop ── */}
+      <aside style={{
         width: 220, background: "var(--brun-dark)", color: "var(--craie)",
         position: "fixed", top: 0, left: 0, bottom: 0,
         display: "flex", flexDirection: "column", zIndex: 10,
-      }}>
+      }} className="admin-sidebar-desk">
         <div style={{ padding: "24px 20px 16px", borderBottom: "1px solid rgba(245,241,232,0.1)" }}>
           <div style={{ fontFamily: "var(--font-display)", fontSize: 16, color: "var(--dore)" }}>La Bièregerie</div>
           <div style={{ fontFamily: "var(--font-script)", fontSize: 22, color: "var(--orange)" }}>d&apos;Henri</div>
           <div style={{ fontSize: 11, color: "rgba(245,241,232,0.5)", marginTop: 4, letterSpacing: "0.1em" }}>BACK-OFFICE</div>
         </div>
-
         <nav style={{ flex: 1, padding: "12px 0", overflowY: "auto" }}>
           {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => { setSection(item.id); setSidebarOpen(false); }}
-              style={{
-                display: "block", width: "100%", textAlign: "left",
-                padding: "11px 20px", border: "none", cursor: "pointer",
-                background: section === item.id ? "rgba(217,122,58,0.15)" : "transparent",
-                color: section === item.id ? "var(--orange)" : "rgba(245,241,232,0.75)",
-                fontFamily: "var(--font-body)", fontSize: 14, fontWeight: 500,
-                borderLeft: section === item.id ? "3px solid var(--orange)" : "3px solid transparent",
-                transition: "all .15s",
-              }}
-            >
-              {item.label}
-            </button>
+            <button key={item.id} onClick={() => setSection(item.id)} style={{
+              display: "block", width: "100%", textAlign: "left",
+              padding: "11px 20px", border: "none", cursor: "pointer",
+              background: section === item.id ? "rgba(217,122,58,0.15)" : "transparent",
+              color: section === item.id ? "var(--orange)" : "rgba(245,241,232,0.75)",
+              fontFamily: "var(--font-body)", fontSize: 14, fontWeight: 500,
+              borderLeft: section === item.id ? "3px solid var(--orange)" : "3px solid transparent",
+              transition: "all .15s",
+            }}>{item.label}</button>
           ))}
         </nav>
-
         <div style={{ padding: "16px 20px", borderTop: "1px solid rgba(245,241,232,0.1)" }}>
           <Link href="/" style={{ color: "var(--dore)", opacity: 0.8, fontSize: 13 }}>← Voir le site</Link>
           <div style={{ marginTop: 12 }}>
-            <button
-              onClick={() => supabase.auth.signOut()}
-              style={{
-                border: "1px solid rgba(245,241,232,0.2)", background: "transparent",
-                color: "rgba(245,241,232,0.55)", padding: "7px 14px", borderRadius: 6,
-                fontFamily: "var(--font-body)", fontSize: 12, cursor: "pointer", width: "100%",
-              }}
-            >
-              Se déconnecter
-            </button>
+            <button onClick={() => supabase.auth.signOut()} style={{
+              border: "1px solid rgba(245,241,232,0.2)", background: "transparent",
+              color: "rgba(245,241,232,0.55)", padding: "7px 14px", borderRadius: 6,
+              fontFamily: "var(--font-body)", fontSize: 12, cursor: "pointer", width: "100%",
+            }}>Se déconnecter</button>
           </div>
         </div>
       </aside>
 
-      {/* Main */}
+      {/* ── Main ── */}
       <main className="admin-main" style={{ marginLeft: 220, flex: 1, minWidth: 0 }}>
-        {/* Topbar */}
-        <div className="admin-topbar" style={{
+
+        {/* Topbar desktop */}
+        <div className="admin-topbar-desk" style={{
           position: "sticky", top: 0, zIndex: 9,
           background: "rgba(251,248,241,0.95)", backdropFilter: "blur(10px)",
           borderBottom: "1px solid rgba(91,58,30,0.08)",
-          padding: "16px 36px", display: "flex", alignItems: "center", justifyContent: "space-between",
-          gap: 12,
+          padding: "16px 36px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <button
-              className="admin-mob-toggle nav-burger"
-              style={{ display: "none" }}
-              onClick={() => setSidebarOpen((o) => !o)}
-              aria-label="Menu"
-            >
-              <span /><span /><span />
-            </button>
-            <h1 style={{ fontFamily: "var(--font-display)", fontSize: 22, color: "var(--brun)", margin: 0 }}>
-              {navItems.find((n) => n.id === section)?.label}
-            </h1>
-          </div>
-          <div style={{ display: "flex", gap: 12, alignItems: "center", flexShrink: 0 }}>
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: 22, color: "var(--brun)", margin: 0 }}>
+            {navItems.find((n) => n.id === section)?.label}
+          </h1>
+          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
             {saved && <span style={{ color: "#2BB673", fontSize: 13, fontWeight: 600 }}>✓ Sauvegardé</span>}
             {error && <span style={{ color: "#C25A3F", fontSize: 13 }}>{error}</span>}
-            <button
-              className="btn btn-secondary btn-sm"
-              onClick={() => {
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `bieregerie-${new Date().toISOString().slice(0, 10)}.json`;
-                a.click();
-              }}
-            >
-              Exporter JSON
-            </button>
+            <button className="btn btn-secondary btn-sm" onClick={() => {
+              const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url; a.download = `bieregerie-${new Date().toISOString().slice(0, 10)}.json`; a.click();
+            }}>Exporter JSON</button>
           </div>
         </div>
+
+        {/* ── App bar mobile ── */}
+        <div className="admin-appbar-mob">
+          <div className="admin-appbar-top">
+            <span className="admin-appbar-title">{navItems.find((n) => n.id === section)?.label}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              {saved && <span style={{ color: "#2BB673", fontSize: 13, fontWeight: 600 }}>✓</span>}
+              {error && <span style={{ color: "#C25A3F", fontSize: 12 }}>!</span>}
+              <Link href="/" className="admin-appbar-link">Site</Link>
+              <button className="admin-nav-burger" aria-label="Menu" onClick={() => setNavOpen(true)}>
+                <span /><span /><span />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Nav drawer mobile ── */}
+        {navOpen && (
+          <div className="admin-nav-overlay" onClick={() => setNavOpen(false)}>
+            <div className="admin-nav-drawer" onClick={(e) => e.stopPropagation()}>
+              <div className="admin-nav-drawer-head">
+                <span className="admin-nav-drawer-title">Navigation</span>
+                <button className="admin-nav-drawer-close" onClick={() => setNavOpen(false)}>✕</button>
+              </div>
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  className={`admin-nav-item${section === item.id ? " active" : ""}`}
+                  onClick={() => { setSection(item.id); setNavOpen(false); }}
+                >
+                  {item.label}
+                </button>
+              ))}
+              <div style={{ marginTop: "auto", padding: "20px 24px 8px", borderTop: "1px solid rgba(245,241,232,0.08)" }}>
+                <button onClick={() => { supabase.auth.signOut(); }} style={{ border: "1px solid rgba(245,241,232,0.2)", background: "transparent", color: "rgba(245,241,232,0.5)", padding: "10px 16px", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 13, cursor: "pointer", width: "100%" }}>Se déconnecter</button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="admin-content" style={{ padding: 36 }}>
           {/* Dashboard */}
@@ -253,7 +260,7 @@ export default function AdminPage() {
                 ))}
               </div>
 
-              <div style={{ background: "var(--papier-warm)", borderRadius: 14, padding: "24px 28px", marginBottom: 28, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div className="admin-seed-block" style={{ background: "var(--papier-warm)", borderRadius: 14, padding: "24px 28px", marginBottom: 28, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <div>
                   <div style={{ fontFamily: "var(--font-display)", fontSize: 17, color: "var(--brun)" }}>Initialiser la base de données</div>
                   <div style={{ fontSize: 13, color: "var(--encre-soft)", marginTop: 4 }}>Écrit toutes les données actuelles dans Supabase (utile au premier démarrage).</div>
@@ -280,7 +287,7 @@ export default function AdminPage() {
                 </button>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+              <div className="admin-quick-nav" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
                 {navItems.slice(1).map((item) => (
                   <button key={item.id} onClick={() => setSection(item.id)} className="btn btn-secondary" style={{ justifyContent: "flex-start" }}>
                     {item.label} <span className="arrow">→</span>
@@ -601,16 +608,20 @@ function BieresEditor({ beers, onSave }: { beers: Beer[]; onSave: (b: Beer[]) =>
       </button>
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {list.map((b) => (
-          <div key={b.id} style={{ display: "grid", gridTemplateColumns: "1fr auto auto auto auto", gap: 12, alignItems: "center", background: "#fff", border: "1px solid rgba(91,58,30,0.08)", borderRadius: 10, padding: "12px 18px" }}>
-            <div>
-              <span style={{ fontFamily: "var(--font-display)", color: "var(--brun)", fontSize: 17 }}>{b.nom}</span>
-              <span style={{ fontSize: 13, color: "var(--encre-soft)", marginLeft: 12 }}>{b.brasserie} · {b.styleLabel} · {b.deg}</span>
-              {b.coup && <span style={{ marginLeft: 8, background: "var(--orange)", color: "#fff", borderRadius: 999, padding: "2px 8px", fontSize: 11, fontWeight: 700 }}>❤ Coup de cœur</span>}
+          <div key={b.id} className="a-item">
+            <div className="a-item-head">
+              <div>
+                <span className="a-item-name">{b.nom}</span>
+                <span className="a-item-meta">{b.brasserie} · {b.styleLabel} · {b.deg}</span>
+              </div>
+              <div className="a-item-right">
+                <span className="a-badge">{b.format}</span>
+                <span className="a-item-price">{Object.values(b.prix)[0]}</span>
+                <button className="a-icon-btn" onClick={() => setEditing(b)} title="Modifier">✎</button>
+                <button className="a-icon-btn danger" onClick={() => remove(b.id)} title="Supprimer">✕</button>
+              </div>
             </div>
-            <span style={{ fontSize: 12, color: "var(--encre-soft)" }}>{b.format}</span>
-            <span style={{ fontFamily: "var(--font-display)", color: "var(--brun)", fontSize: 18 }}>{Object.values(b.prix)[0]}</span>
-            <button className="btn btn-secondary btn-sm" onClick={() => setEditing(b)}>Modifier</button>
-            <button style={{ border: "1px solid #C25A3F", color: "#C25A3F", background: "transparent", padding: "8px 14px", borderRadius: 999, fontWeight: 600, fontSize: 13, cursor: "pointer" }} onClick={() => remove(b.id)}>✕</button>
+            {b.coup && <span className="a-badge orange" style={{ alignSelf: "flex-start" }}>❤ Coup de cœur</span>}
           </div>
         ))}
       </div>
@@ -638,11 +649,11 @@ function BeerEditModal({ beer, isNew, onSave, onClose }: { beer: Beer; isNew?: b
   const inputStyle = { width: "100%", padding: "9px 12px", border: "1.5px solid rgba(91,58,30,0.18)", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 14 };
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(26,23,20,0.55)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-      <div style={{ background: "#fff", borderRadius: 22, maxWidth: 640, width: "100%", maxHeight: "90vh", overflow: "auto", padding: 36 }}>
+    <div className="a-modal-overlay" style={{ position: "fixed", inset: 0, background: "rgba(26,23,20,0.55)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+      <div className="a-modal-box" style={{ background: "#fff", borderRadius: 22, maxWidth: 640, width: "100%", maxHeight: "90vh", overflow: "auto", padding: 36 }}>
         <h3 style={{ marginBottom: 24 }}>{isNew ? "Nouvelle bière" : `Modifier — ${beer.nom}`}</h3>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <div className="a-modal-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
           <div className="field">
             <label>Nom</label>
             <input style={inputStyle} value={form.nom} onChange={(e) => setForm((f) => ({ ...f, nom: e.target.value }))} placeholder="La Houblonnée" />
@@ -776,25 +787,31 @@ function EvenementsEditor({ evs, onSave }: { evs: Evenement[]; onSave: (e: Evene
       </button>
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {list.map((e) => (
-          <div key={e.id} style={{ display: "grid", gridTemplateColumns: "60px 1fr auto auto", gap: 12, alignItems: "center", background: "#fff", border: "1px solid rgba(91,58,30,0.08)", borderRadius: 10, padding: "12px 18px" }}>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontFamily: "var(--font-display)", fontSize: 22, color: "var(--orange)" }}>{e.jour}</div>
-              <div style={{ fontSize: 12, color: "var(--encre-soft)" }}>{e.mois}</div>
+          <div key={e.id} className="a-item">
+            <div className="a-item-head">
+              <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+                <div className="a-date-pill">
+                  <span className="a-date-day">{e.jour}</span>
+                  <span className="a-date-mon">{e.mois}</span>
+                </div>
+                <div>
+                  <span className="a-item-name">{e.titre}</span>
+                  <span className="a-item-meta">{e.heure} · {e.tag}</span>
+                </div>
+              </div>
+              <div className="a-item-right">
+                <button className="a-icon-btn" onClick={() => { setIsNew(false); setEditing(e); }} title="Modifier">✎</button>
+                <button className="a-icon-btn danger" onClick={() => remove(e.id)} title="Supprimer">✕</button>
+              </div>
             </div>
-            <div>
-              <div style={{ fontFamily: "var(--font-display)", color: "var(--brun)", fontSize: 16 }}>{e.titre}</div>
-              <div style={{ fontSize: 13, color: "var(--encre-soft)" }}>{e.heure} · {e.tag}</div>
-            </div>
-            <button className="btn btn-secondary btn-sm" onClick={() => { setIsNew(false); setEditing(e); }}>Modifier</button>
-            <button style={{ border: "1px solid #C25A3F", color: "#C25A3F", background: "transparent", padding: "8px 14px", borderRadius: 999, fontWeight: 600, fontSize: 13, cursor: "pointer" }} onClick={() => remove(e.id)}>✕</button>
           </div>
         ))}
       </div>
       {editing && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(26,23,20,0.55)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-          <div style={{ background: "#fff", borderRadius: 22, maxWidth: 560, width: "100%", padding: 36 }}>
+        <div className="a-modal-overlay" style={{ position: "fixed", inset: 0, background: "rgba(26,23,20,0.55)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+          <div className="a-modal-box" style={{ background: "#fff", borderRadius: 22, maxWidth: 560, width: "100%", padding: 36, overflow: "auto", maxHeight: "90vh" }}>
             <h3 style={{ marginBottom: 20 }}>{isNew ? "Nouvel événement" : "Modifier l'événement"}</h3>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            <div className="a-modal-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
               <div className="field" style={{ gridColumn: "1/-1" }}>
                 <label>Titre</label>
                 <input value={editing.titre} onChange={(e) => setEditing({ ...editing, titre: e.target.value })} />
@@ -900,7 +917,8 @@ function FutsEditor({ futs, onSave }: { futs: Fut[]; onSave: (f: Fut[]) => void 
     <div>
       <button className="btn btn-primary btn-sm" style={{ marginBottom: 20 }} onClick={add}>+ Ajouter un fût</button>
       <div style={{ background: "#fff", border: "1px solid rgba(91,58,30,0.08)", borderRadius: 14, overflow: "hidden" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 540 }}>
           <thead>
             <tr style={{ background: "var(--papier-warm)" }}>
               {["Bière", "Style", "Brasserie", "Volume", "Prix", ""].map((h) => (
@@ -937,6 +955,7 @@ function FutsEditor({ futs, onSave }: { futs: Fut[]; onSave: (f: Fut[]) => void 
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
@@ -960,35 +979,39 @@ function BoissonEditor({ boissons, onSave }: { boissons: Boisson[]; onSave: (b: 
       <button className="btn btn-primary btn-sm" style={{ marginBottom: 20 }} onClick={add}>+ Ajouter une boisson</button>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {list.map((b, i) => (
-          <div key={i} style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr 1fr 100px 100px auto", gap: 10, alignItems: "center", background: "#fff", border: "1px solid rgba(91,58,30,0.08)", borderRadius: 10, padding: "12px 18px" }}>
-            <input
-              style={{ padding: "8px 12px", border: "1.5px solid rgba(91,58,30,0.18)", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 14 }}
-              value={b.nom} placeholder="Nom"
-              onChange={(e) => update(i, { ...b, nom: e.target.value })}
-            />
-            <select
-              style={{ padding: "8px 12px", border: "1.5px solid rgba(91,58,30,0.18)", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 14 }}
-              value={b.categorie}
-              onChange={(e) => update(i, { ...b, categorie: e.target.value })}
-            >
-              {categories.map((c) => <option key={c}>{c}</option>)}
-            </select>
-            <input
-              style={{ padding: "8px 12px", border: "1.5px solid rgba(91,58,30,0.18)", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 14 }}
-              value={b.origine ?? ""} placeholder="Origine"
-              onChange={(e) => update(i, { ...b, origine: e.target.value })}
-            />
-            <input
-              style={{ padding: "8px 12px", border: "1.5px solid rgba(91,58,30,0.18)", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 14 }}
-              value={b.prix["verre"] ?? ""} placeholder="Verre"
-              onChange={(e) => update(i, { ...b, prix: { ...b.prix, verre: e.target.value } })}
-            />
-            <input
-              style={{ padding: "8px 12px", border: "1.5px solid rgba(91,58,30,0.18)", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 14 }}
-              value={b.prix["bouteille"] ?? ""} placeholder="Bouteille"
-              onChange={(e) => update(i, { ...b, prix: { ...b.prix, bouteille: e.target.value } })}
-            />
-            <button style={{ border: "none", background: "none", color: "#C25A3F", cursor: "pointer", fontSize: 18 }} onClick={() => remove(i)}>✕</button>
+          <div key={i} className="a-item">
+            <div className="a-item-head">
+              <input
+                style={{ fontFamily: "var(--font-display)", fontSize: 16, color: "var(--brun)", border: "none", background: "transparent", flex: 1, padding: 0, outline: "none", fontWeight: 400 }}
+                value={b.nom} placeholder="Nom de la boisson"
+                onChange={(e) => update(i, { ...b, nom: e.target.value })}
+              />
+              <button className="a-icon-btn danger" onClick={() => remove(i)}>✕</button>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <select
+                style={{ padding: "7px 10px", border: "1.5px solid rgba(91,58,30,0.15)", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 13, background: "var(--papier)", gridColumn: "1/-1" }}
+                value={b.categorie}
+                onChange={(e) => update(i, { ...b, categorie: e.target.value })}
+              >
+                {categories.map((c) => <option key={c}>{c}</option>)}
+              </select>
+              <input
+                style={{ padding: "7px 10px", border: "1.5px solid rgba(91,58,30,0.15)", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 13 }}
+                value={b.origine ?? ""} placeholder="Origine"
+                onChange={(e) => update(i, { ...b, origine: e.target.value })}
+              />
+              <input
+                style={{ padding: "7px 10px", border: "1.5px solid rgba(91,58,30,0.15)", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 13 }}
+                value={b.prix["verre"] ?? ""} placeholder="Prix au verre"
+                onChange={(e) => update(i, { ...b, prix: { ...b.prix, verre: e.target.value } })}
+              />
+              <input
+                style={{ padding: "7px 10px", border: "1.5px solid rgba(91,58,30,0.15)", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 13 }}
+                value={b.prix["bouteille"] ?? ""} placeholder="Prix bouteille"
+                onChange={(e) => update(i, { ...b, prix: { ...b.prix, bouteille: e.target.value } })}
+              />
+            </div>
           </div>
         ))}
       </div>

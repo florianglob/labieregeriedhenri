@@ -31,8 +31,7 @@ export default async function MidiPage() {
               Le menu <span className="scripted">de la semaine</span>
             </h1>
             <p className="lead" style={{ marginTop: 16 }}>
-              Une ardoise courte, des produits frais, un accord bière par Henri. Ça change
-              chaque semaine.
+              Une ardoise courte, des produits frais. Ça change chaque semaine.
             </p>
           </div>
         </div>
@@ -42,13 +41,12 @@ export default async function MidiPage() {
       <section className="tight">
         <div className="wrap">
           <div
-            className="chalkboard"
-            style={{ padding: "56px 48px" }}
+            className="chalkboard chalk-full"
           >
             <div className="chalk-title">{m.semaine}</div>
             <div className="chalk-sub">— mardi au vendredi · 12h–14h —</div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 56px" }}>
+            <div className="chalk-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 56px" }}>
               {/* Colonne gauche */}
               <div>
                 <div style={{ fontFamily: "var(--font-body)", fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(245,241,232,0.6)", marginBottom: 12 }}>
@@ -78,15 +76,6 @@ export default async function MidiPage() {
                   </div>
                 ))}
 
-                <div style={{ marginTop: 28, border: "1px dashed rgba(232,177,74,0.5)", borderRadius: 10, padding: "18px 20px" }}>
-                  <div style={{ fontFamily: "var(--font-body)", fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--dore)", marginBottom: 8 }}>
-                    Accord de la semaine
-                  </div>
-                  <div style={{ fontSize: 24, color: "var(--dore)" }}>{m.accord.nom}</div>
-                  <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "rgba(245,241,232,0.7)", marginTop: 4 }}>
-                    {m.accord.desc}
-                  </div>
-                </div>
               </div>
 
               {/* Colonne droite */}
@@ -125,9 +114,6 @@ export default async function MidiPage() {
               </div>
             </div>
 
-            <div style={{ textAlign: "center", marginTop: 40, fontFamily: "var(--font-script)", fontSize: 24, opacity: 0.75 }}>
-              — fait maison, produits du marché —
-            </div>
           </div>
         </div>
       </section>
@@ -135,7 +121,7 @@ export default async function MidiPage() {
       {/* Infos pratiques */}
       <section>
         <div className="wrap">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28 }}>
+          <div className="duo-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28 }}>
             <div className="info-card">
               <h3 style={{ marginBottom: 18 }}>Comment ça marche</h3>
               <div className="info-block" style={{ borderTop: "1px dashed rgba(91,58,30,0.18)" }}>

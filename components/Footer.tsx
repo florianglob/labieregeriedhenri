@@ -1,24 +1,8 @@
-"use client";
-
-import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { SiteData } from "@/lib/data";
 
 export default function Footer({ data }: { data: SiteData }) {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
-
-  function handleNewsletter(e: React.FormEvent) {
-    e.preventDefault();
-    setSent(true);
-    setEmail("");
-    timerRef.current = setTimeout(() => setSent(false), 4000);
-  }
-
   return (
     <footer className="footer">
       <div className="wrap">
@@ -33,8 +17,7 @@ export default function Footer({ data }: { data: SiteData }) {
               </div>
             </div>
             <p className="small-text">
-              {data.contact.tagline}. Bar à bières, cave-épicerie &amp; afterworks
-              dans ton quartier.
+              {data.contact.tagline}. Bar à bières &amp; afterworks dans ton quartier.
             </p>
             <div className="socials" style={{ marginTop: 18 }}>
               <a href={data.contact.instagram} target="_blank" rel="noreferrer" aria-label="Instagram">
@@ -71,32 +54,6 @@ export default function Footer({ data }: { data: SiteData }) {
             </ul>
           </div>
 
-          {/* Newsletter */}
-          <div>
-            <h4>La gazette d&apos;Henri</h4>
-            <p className="small-text">
-              Une fois par mois : nouvelles bières, événements, et menu du midi. Pas
-              de pub, promis.
-            </p>
-            {sent ? (
-              <p style={{ color: "var(--dore)", marginTop: 10, fontSize: 14 }}>
-                ✓ Merci ! On garde ton mail au chaud.
-              </p>
-            ) : (
-              <form className="newsletter" onSubmit={handleNewsletter}>
-                <input
-                  type="email"
-                  placeholder="ton@mail.fr"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <button type="submit" className="btn btn-primary btn-sm">
-                  OK
-                </button>
-              </form>
-            )}
-          </div>
         </div>
 
         <div className="footer-bottom">

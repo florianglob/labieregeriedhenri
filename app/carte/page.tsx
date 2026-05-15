@@ -168,7 +168,7 @@ export default async function CartePage() {
       {(aperitifs.length > 0 || softs.length > 0) && (
         <section>
           <div className="wrap">
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56 }}>
+            <div className="duo-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56 }}>
               {aperitifs.length > 0 && (
                 <div>
                   <span className="eyebrow">Apéritifs</span>

@@ -12,7 +12,9 @@ export default function ContactPage() {
   const [D, setD] = useState<SiteData>(BASE_DATA);
   useEffect(() => { loadAdminData().then(setD).catch(() => {}); }, []);
   const [resSent, setResSent] = useState(false);
-  const [privSent, setPrivSent] = useState(false);
+  const [resSending, setResSending] = useState(false);
+  const [resError, setResError] = useState("");
+  const [privSent] = useState(false);
 
   return (
     <>
@@ -94,7 +96,7 @@ export default function ContactPage() {
       {/* Réservation */}
       <section id="reserver" style={{ background: "var(--papier-warm)" }}>
         <div className="wrap">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 48, alignItems: "start" }}>
+          <div className="duo-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1.3fr", gap: 48, alignItems: "start" }}>
             <div>
               <span className="eyebrow">Réservation</span>
               <h2 style={{ marginTop: 14 }}>
@@ -122,27 +124,48 @@ export default function ContactPage() {
                   <p style={{ color: "var(--encre-soft)" }}>On confirme par SMS ou email dans l&apos;heure.</p>
                 </div>
               ) : (
-                <form onSubmit={(e) => { e.preventDefault(); setResSent(true); }}>
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  setResSending(true); setResError("");
+                  const fd = new FormData(e.currentTarget);
+                  const res = await fetch("/api/contact", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      prenom:   fd.get("prenom"),
+                      tel:      fd.get("tel"),
+                      email:    fd.get("email"),
+                      date:     fd.get("date"),
+                      heure:    fd.get("heure"),
+                      personnes: fd.get("personnes"),
+                      type:     fd.get("type"),
+                      message:  fd.get("message"),
+                    }),
+                  });
+                  setResSending(false);
+                  if (res.ok) setResSent(true);
+                  else setResError("Erreur lors de l'envoi. Appelle-nous directement.");
+                }}>
                   <div className="form-grid">
                     <div className="field">
                       <label>Prénom</label>
-                      <input type="text" required placeholder="Henri" />
+                      <input name="prenom" type="text" required placeholder="Henri" />
                     </div>
                     <div className="field">
                       <label>Téléphone</label>
-                      <input type="tel" required placeholder="06 12 34 56 78" />
+                      <input name="tel" type="tel" required placeholder="06 12 34 56 78" />
                     </div>
                     <div className="field">
                       <label>Email</label>
-                      <input type="email" placeholder="ton@mail.fr" />
+                      <input name="email" type="email" placeholder="ton@mail.fr" />
                     </div>
                     <div className="field">
                       <label>Date</label>
-                      <input type="date" required />
+                      <input name="date" type="date" required />
                     </div>
                     <div className="field">
                       <label>Heure</label>
-                      <select>
+                      <select name="heure">
                         <option>12h00</option>
                         <option>12h30</option>
                         <option>19h00</option>
@@ -153,13 +176,13 @@ export default function ContactPage() {
                     </div>
                     <div className="field">
                       <label>Nombre de personnes</label>
-                      <select>
+                      <select name="personnes">
                         {[2,3,4,5,6,7,8].map(n => <option key={n}>{n} personnes</option>)}
                       </select>
                     </div>
                     <div className="field">
                       <label>Type de visite</label>
-                      <select>
+                      <select name="type">
                         <option>Déjeuner (midi)</option>
                         <option>Dîner / soirée</option>
                         <option>Afterwork</option>
@@ -168,15 +191,17 @@ export default function ContactPage() {
                     </div>
                     <div className="field full">
                       <label>Demande particulière</label>
-                      <textarea placeholder="Allergie, anniversaire, table en terrasse…" />
+                      <textarea name="message" placeholder="Allergie, anniversaire, table en terrasse…" />
                     </div>
                   </div>
+                  {resError && <p style={{ color: "#C25A3F", marginTop: 12, fontSize: 14 }}>{resError}</p>}
                   <button
                     type="submit"
                     className="btn btn-primary"
+                    disabled={resSending}
                     style={{ marginTop: 18, width: "100%", justifyContent: "center" }}
                   >
-                    Réserver ma table <span className="arrow">→</span>
+                    {resSending ? "Envoi…" : <>Réserver ma table <span className="arrow">→</span></>}
                   </button>
                 </form>
               )}
@@ -189,7 +214,7 @@ export default function ContactPage() {
       <section id="privatiser" style={{ background: "var(--brun-dark)", borderRadius: 0 }}>
         <div className="wrap">
           <div style={{ background: "var(--brun-dark)", borderRadius: "var(--radius-lg)", padding: "56px 0" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 48, alignItems: "center" }}>
+            <div className="duo-grid" style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 48, alignItems: "center" }}>
               <div>
                 <span className="eyebrow" style={{ color: "var(--dore)" }}>Privatisation</span>
                 <h2 style={{ marginTop: 14, color: "var(--craie)" }}>
