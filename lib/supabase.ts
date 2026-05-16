@@ -30,6 +30,7 @@ function dbToBeer(r: Row): Beer {
     deg: r.deg as string,
     format: r.format as Beer["format"],
     coup: r.coup as boolean | undefined,
+    actif: r.actif as boolean,
     note: r.note as string,
     prix: r.prix as Record<string, string>,
     photo: r.photo as string | undefined,
@@ -51,7 +52,7 @@ function beerToDb(b: Beer, position: number): Row {
     prix: b.prix,
     photo: b.photo ?? null,
     details: b.details ?? {},
-    actif: true,
+    actif: b.actif ?? true,
     position,
   };
 }
@@ -127,10 +128,13 @@ function dbToBoisson(r: Row): Boisson {
 
 // ---- Chargement complet (admin + pages publiques) ----
 
-export async function loadAdminData(): Promise<SiteData> {
+export async function loadAdminData(adminMode = false): Promise<SiteData> {
+  const beersQuery = adminMode
+    ? supabase.from("beers").select("*").order("position")
+    : supabase.from("beers").select("*").eq("actif", true).order("position");
   const [beersR, eventsR, menuR, horairesR, forfaitsR, futsR, boissonsR, configR] =
     await Promise.all([
-      supabase.from("beers").select("*").eq("actif", true).order("position"),
+      beersQuery,
       supabase.from("evenements").select("*").eq("actif", true).order("date_event"),
       supabase.from("menu_semaine").select("*").eq("actif", true).order("id", { ascending: false }).limit(1),
       supabase.from("horaires").select("*").order("position"),

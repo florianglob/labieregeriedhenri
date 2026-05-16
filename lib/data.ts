@@ -24,6 +24,7 @@ export interface Beer {
   deg: string;
   format: Format;
   coup?: boolean;
+  actif?: boolean;
   note: string;
   prix: Record<string, string>;
   photo?: string;
