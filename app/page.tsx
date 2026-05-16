@@ -315,7 +315,7 @@ export default async function Home() {
               ))}
 
               <div style={{ textAlign: "center", marginTop: 18 }}>
-                <Link href="/midi" className="btn btn-primary btn-sm">
+                <Link href="/midi" className="btn btn-primary">
                   Le menu en entier <span className="arrow">→</span>
                 </Link>
               </div>
@@ -399,10 +399,10 @@ export default async function Home() {
                 ))}
               </div>
               <div style={{ marginTop: 8, display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <Link href="/contact#reserver" className="btn btn-primary btn-sm">
+                <Link href="/contact#reserver" className="btn btn-primary">
                   Réserver <span className="arrow">→</span>
                 </Link>
-                <Link href="/contact#privatiser" className="btn btn-secondary btn-sm">
+                <Link href="/contact#privatiser" className="btn btn-secondary">
                   Privatiser
                 </Link>
               </div>
