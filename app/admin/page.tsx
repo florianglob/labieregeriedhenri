@@ -22,7 +22,6 @@ import {
   saveFuts,
   saveBoissons,
   saveSiteConfig,
-  seedAllData,
 } from "@/lib/supabase";
 
 // ---- Constantes partagées ----
@@ -75,7 +74,6 @@ export default function AdminPage() {
   const [data, setData] = useState<SiteData>(BASE_DATA);
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
-  const [seeding, setSeeding] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
@@ -258,34 +256,7 @@ export default function AdminPage() {
                 ))}
               </div>
 
-              <div className="admin-seed-block" style={{ background: "var(--papier-warm)", borderRadius: 14, padding: "24px 28px", marginBottom: 28, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: 17, color: "var(--brun)" }}>Initialiser la base de données</div>
-                  <div style={{ fontSize: 13, color: "var(--encre-soft)", marginTop: 4 }}>Écrit toutes les données actuelles dans Supabase (utile au premier démarrage).</div>
-                </div>
-                <button
-                  className="btn btn-primary"
-                  disabled={seeding}
-                  onClick={async () => {
-                    if (!confirm("Écrire toutes les données en base ? Les données existantes seront écrasées.")) return;
-                    setSeeding(true);
-                    try {
-                      await seedAllData(data);
-                      setSaved(true);
-                      setTimeout(() => setSaved(false), 2500);
-                    } catch (err) {
-                      console.error("seedAllData error:", err);
-                      setError("Erreur d'initialisation.");
-                    } finally {
-                      setSeeding(false);
-                    }
-                  }}
-                >
-                  {seeding ? "En cours…" : <>Tout sauvegarder en DB <span className="arrow">→</span></>}
-                </button>
-              </div>
-
-              <div className="admin-quick-nav" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+<div className="admin-quick-nav" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
                 {navItems.slice(1).map((item) => (
                   <button key={item.id} onClick={() => setSection(item.id)} className="btn btn-secondary" style={{ justifyContent: "flex-start" }}>
                     {item.label} <span className="arrow">→</span>
