@@ -288,9 +288,9 @@ export const BASE_DATA: SiteData = {
 
   etapes: [
     { num: 1, titre: "Tu choisis tes fûts", desc: "Blonde, IPA, ambrée, brune, blanche, sans alcool. On t'envoie la liste à jour à ta date." },
-    { num: 2, titre: "On prépare le matos", desc: "Tireuse, détendeurs, glace, gobelets. Tout est prêt 24h avant l'événement." },
+    { num: 2, titre: "On prépare le matos", desc: "Tireuse, détendeurs, glace. Tout est prêt 24h avant l'événement." },
     { num: 3, titre: "Tu passes récupérer", desc: "Retrait sur place pendant nos horaires d'ouverture. Briefing rapide pour l'installation chez toi." },
-    { num: 4, titre: "Tu ramènes le matériel", desc: "Reprise sous 48h après l'événement. Fûts entamés non finis remboursés." },
+    { num: 4, titre: "Tu ramènes le matériel", desc: "Reprise sous 48h après l'événement. Les fûts entamés non finis ne sont pas remboursés." },
   ],
 
   photos: {},
