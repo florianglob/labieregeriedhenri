@@ -39,7 +39,7 @@ function dbToBeer(r: Row): Beer {
 }
 
 function beerToDb(b: Beer, position: number): Row {
-  return {
+  const row: Row = {
     nom: b.nom,
     brasserie: b.brasserie,
     style: b.style,
@@ -55,6 +55,9 @@ function beerToDb(b: Beer, position: number): Row {
     actif: b.actif ?? true,
     position,
   };
+  // inclure l'id seulement pour les bières existantes (id DB, pas un Date.now() temporaire)
+  if (b.id && b.id < 1_000_000_000) row.id = b.id;
+  return row;
 }
 
 function dbToEvent(r: Row): Evenement {
@@ -178,9 +181,14 @@ export async function loadAdminData(adminMode = false): Promise<SiteData> {
 // ---- Fonctions de sauvegarde par table ----
 
 export async function saveBeers(beers: Beer[]): Promise<void> {
-  await supabase.from("beers").delete().gte("id", 0);
+  // Récupère les IDs existants pour supprimer les bières retirées
+  const { data: existing } = await supabase.from("beers").select("id");
+  const existingIds = new Set((existing ?? []).map((r: Row) => r.id as number));
+  const keepIds = new Set(beers.filter(b => b.id < 1_000_000_000).map(b => b.id));
+  const toDelete = [...existingIds].filter(id => !keepIds.has(id as number));
+  if (toDelete.length > 0) await supabase.from("beers").delete().in("id", toDelete);
   if (!beers.length) return;
-  const { error } = await supabase.from("beers").insert(beers.map(beerToDb));
+  const { error } = await supabase.from("beers").upsert(beers.map(beerToDb), { onConflict: "id" });
   if (error) throw error;
 }
 
