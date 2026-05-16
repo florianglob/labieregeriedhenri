@@ -2008,3 +2008,42 @@ h1 .scripted, h2 .scripted, h3 .scripted {
   .hero-sticker { width: 100px; height: 100px; font-size: 14px; top: -10px; right: -10px; }
   .hero-sticker .small { font-size: 16px; }
 }
+
+/* =====================================================
+   ANIMATIONS DESKTOP
+   ===================================================== */
+@media (min-width: 761px) {
+  @keyframes animFadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes animFadeIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* Hero — déclenché au chargement */
+  .hero-visual {
+    animation: animFadeIn 1s cubic-bezier(0.22, 0.68, 0, 1.1) 0.05s both;
+  }
+  .hero-ctas {
+    animation: animFadeUp 0.7s cubic-bezier(0.22, 0.68, 0, 1.1) 0.25s both;
+  }
+  .hero-stats {
+    animation: animFadeUp 0.7s cubic-bezier(0.22, 0.68, 0, 1.1) 0.55s both;
+  }
+
+  /* Scroll-triggered — n'active qu'après hydratation JS */
+  .anim-ready [data-anim] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.65s ease, transform 0.7s cubic-bezier(0.22, 0.68, 0, 1.1);
+  }
+  .anim-ready [data-anim="fade"] {
+    transform: scale(0.97);
+  }
+  .anim-ready [data-anim].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}

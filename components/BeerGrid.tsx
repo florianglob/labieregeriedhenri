@@ -25,13 +25,15 @@ export default function BeerGrid({ beers, data, limit, showStrip = false }: Prop
             Rien dans ce style en ce moment — reviens nous voir.
           </div>
         ) : (
-          displayed.map((b) => {
+          displayed.map((b, i) => {
             const pp = primaryPrice(b);
             const prices = Object.entries(b.prix);
             return (
               <div
                 key={b.id}
                 className="beer-card"
+                data-anim
+                style={{ transitionDelay: `${i * 70}ms` }}
                 role="button"
                 tabIndex={0}
                 onClick={() => setSelectedBeer(b)}

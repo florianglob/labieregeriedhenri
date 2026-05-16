@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import FilteredBeers from "@/components/FilteredBeers";
 import MapEmbedClient from "@/components/MapEmbedClient";
+import ScrollAnimations from "@/components/ScrollAnimations";
 import { BASE_DATA } from "@/lib/data";
 import { loadAdminData } from "@/lib/supabase";
 
@@ -62,6 +63,7 @@ export default async function Home() {
 
   return (
     <>
+      <ScrollAnimations />
       <Nav active="accueil" />
 
       {/* ===== HERO ===== */}
@@ -159,7 +161,7 @@ export default async function Home() {
       {/* ===== BIÈRE DU MOMENT ===== */}
       <section className="tight mob-hide">
         <div className="wrap">
-          <div className="feature-bar">
+          <div className="feature-bar" data-anim>
             <div className="fb-bottle">capsule</div>
             <div>
               <span className="fb-tag">★ {D.biereDuMoment.tag}</span>
@@ -227,9 +229,9 @@ export default async function Home() {
             </Link>
           </div>
           <div className="events-grid">
-            {D.evenementsAvenir.slice(0, 3).map((e) => (
+            {D.evenementsAvenir.slice(0, 3).map((e, i) => (
               <Link key={e.id} className="event-card" href={`/evenements#ev-${e.id}`}>
-                <div className="img">
+                <div className="img" data-anim="fade" style={{ transitionDelay: `${i * 100}ms` }}>
                   <span className="tag">{e.tag}</span>
                   <span className="date">
                     <span className="d">{e.jour}</span>
@@ -276,7 +278,7 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="split">
+          <div className="split" data-anim>
             {/* Ardoise du midi */}
             <div className="chalkboard">
               <div className="chalk-title">{semaineLabel()}</div>
@@ -352,7 +354,7 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="contact-grid">
+          <div className="contact-grid" data-anim>
             <div className="info-card">
               <div className="info-block">
                 <div className="label">Adresse</div>
