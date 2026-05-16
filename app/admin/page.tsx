@@ -91,7 +91,7 @@ export default function AdminPage() {
       setData(next);
       setError(null);
       try {
-        if ("bieres" in patch) await saveBeers(patch.bieres!);
+        if ("bieres" in patch) { await saveBeers(patch.bieres!); fetch("/api/revalidate", { method: "POST" }); }
         if ("evenementsAvenir" in patch) await saveEvenements(patch.evenementsAvenir!);
         if ("menuSemaine" in patch) await saveMenu(patch.menuSemaine!);
         if ("horaires" in patch) await saveHoraires(patch.horaires!);
