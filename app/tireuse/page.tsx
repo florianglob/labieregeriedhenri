@@ -63,12 +63,37 @@ export default function TireusePage() {
         </div>
       </header>
 
+      {/* Callout modèle tarifaire */}
+      <section className="tight" style={{ paddingBottom: 0 }}>
+        <div className="wrap">
+          <div style={{
+            background: "var(--brun-dark)",
+            borderRadius: "var(--radius-lg)",
+            padding: "28px 36px",
+            display: "flex",
+            alignItems: "center",
+            gap: 28,
+            flexWrap: "wrap",
+          }}>
+            <div style={{ fontSize: 40, lineHeight: 1 }}>🍺</div>
+            <div style={{ flex: 1, minWidth: 220 }}>
+              <div style={{ color: "var(--dore)", fontFamily: "var(--font-display)", fontSize: 20, marginBottom: 6 }}>
+                La tireuse, c&apos;est gratuit.
+              </div>
+              <div style={{ color: "rgba(245,241,232,0.75)", fontSize: 15, lineHeight: 1.6 }}>
+                Tu paies uniquement les fûts que tu choisis. Le matos, le briefing, les gobelets — c&apos;est offert. Une caution de {D.tireuse.caution} est demandée à la remise du matériel.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Forfaits */}
       <section className="tight">
         <div className="wrap">
-          <span className="eyebrow">Les forfaits</span>
+          <span className="eyebrow">Les formules</span>
           <h2 style={{ marginTop: 14 }}>
-            Choisis ton <span className="scripted">format</span>
+            Choisis ta <span className="scripted">durée</span>
           </h2>
           <div className="forfaits">
             {D.forfaits.map((f) => (
@@ -77,8 +102,11 @@ export default function TireusePage() {
                 <div className="kicker">{f.kicker}</div>
                 <h3>{f.nom}</h3>
                 <div className="price">
-                  {f.base}
-                  {f.base !== "sur devis" && <span className="unit">location seule</span>}
+                  {f.base === "Gratuit" ? (
+                    <span style={{ color: "var(--orange)", fontSize: 28 }}>Gratuit</span>
+                  ) : (
+                    f.base
+                  )}
                 </div>
                 <p className="desc">{f.desc}</p>
                 <ul>

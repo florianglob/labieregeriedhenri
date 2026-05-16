@@ -259,14 +259,14 @@ export const BASE_DATA: SiteData = {
   },
 
   tireuse: {
-    pitch: "Tireuse pro 2 becs (= 2 fûts servis en parallèle). Tu choisis tes fûts dans notre sélection, on te prépare le matos, tu passes le récupérer.",
+    pitch: "La tireuse est gratuite. Tu paies uniquement les fûts que tu choisis dans notre sélection. On prépare le matos, tu passes le récupérer.",
     retrait: "À retirer chez nous · pas de livraison",
-    caution: "200 € (rendus à la reprise du matériel propre)",
+    caution: "200 € (rendus à la reprise du matériel propre et entier)",
   },
 
   forfaits: [
-    { id: "weekend", nom: "Week-end", kicker: "vendredi → dimanche", base: "à partir de 39€", desc: "Location de la tireuse 2 becs sur le week-end, choix des fûts à part.", inclus: ["Tireuse pro 2 becs", "Bac à glace + détendeurs", "Notice & briefing", "30 gobelets réutilisables", "Caution 200 €"], featured: false, addon: "Fûts en sus selon ta sélection" },
-    { id: "semaine", nom: "Semaine", kicker: "5 à 7 jours", base: "à partir de 79€", desc: "Pour les soirées qui s'étalent ou les semaines de mariage. Le best-seller.", inclus: ["Tireuse pro 2 becs", "Bac à glace + détendeurs", "Notice & briefing", "50 gobelets réutilisables", "1 changement de fût offert", "Caution 200 €"], featured: true, addon: "Fûts en sus selon ta sélection" },
+    { id: "weekend", nom: "Week-end", kicker: "vendredi → dimanche", base: "Gratuit", desc: "La tireuse 2 becs pour le week-end. Tu choisis tes fûts, on prépare tout.", inclus: ["Tireuse pro 2 becs", "Bac à glace + détendeurs", "Notice & briefing", "30 gobelets réutilisables", "Caution 200 €"], featured: false, addon: "Tu paies uniquement les fûts" },
+    { id: "semaine", nom: "Semaine", kicker: "5 à 7 jours", base: "Gratuit", desc: "Pour les soirées qui s'étalent ou les semaines de mariage. Le best-seller.", inclus: ["Tireuse pro 2 becs", "Bac à glace + détendeurs", "Notice & briefing", "50 gobelets réutilisables", "1 changement de fût offert", "Caution 200 €"], featured: true, addon: "Tu paies uniquement les fûts" },
     { id: "evenement", nom: "Événement", kicker: "+ de 100 personnes", base: "sur devis", desc: "Mariage, festival, kermesse : on adapte le matos et la sélection bières.", inclus: ["Tireuse pro 2 becs haute capacité", "Bac à glace renforcé", "200 gobelets réutilisables", "Brief sur place", "Liste fûts personnalisée", "Caution selon volume"], featured: false, addon: "Fûts + prestation sur devis" },
   ],
 
