@@ -796,6 +796,7 @@ h1 .scripted, h2 .scripted, h3 .scripted {
   box-shadow: var(--shadow-lift);
   font-family: var(--font-script);
 }
+.chalkboard .btn { font-family: var(--font-body); }
 .chalkboard::before, .chalkboard::after {
   content: "";
   position: absolute;

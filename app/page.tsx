@@ -316,7 +316,7 @@ export default async function Home() {
 
               <div style={{ textAlign: "center", marginTop: 18 }}>
                 <Link href="/midi" className="btn btn-primary">
-                  Le menu en entier <span className="arrow">→</span>
+                  Le menu en entier
                 </Link>
               </div>
             </div>
