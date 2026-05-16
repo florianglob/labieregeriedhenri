@@ -101,6 +101,7 @@ export interface SiteData {
     instagram: string;
   };
   horaires: Array<{ jour: string; hr: string; closed?: boolean }>;
+  biereDuMomentId?: number;
   biereDuMoment: {
     nom: string;
     brasserie: string;

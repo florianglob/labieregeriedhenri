@@ -4,7 +4,8 @@ import Footer from "@/components/Footer";
 import FilteredBeers from "@/components/FilteredBeers";
 import MapEmbedClient from "@/components/MapEmbedClient";
 import ScrollAnimations from "@/components/ScrollAnimations";
-import { BASE_DATA } from "@/lib/data";
+import { BASE_DATA, primaryPrice } from "@/lib/data";
+import BeerVisual from "@/components/BeerVisual";
 import { loadAdminData } from "@/lib/supabase";
 
 export const revalidate = 60;
@@ -28,7 +29,13 @@ function buildStrip(D: typeof BASE_DATA): string[] {
   const items: string[] = [];
 
   // Bière du moment
-  items.push(`BIÈRE DU MOMENT · ${D.biereDuMoment.nom} · ${D.biereDuMoment.prix}`);
+  const mb = D.bieres.find((b) => b.id === D.biereDuMomentId);
+  if (mb) {
+    const pp = primaryPrice(mb);
+    items.push(`BIÈRE DU MOMENT · ${mb.nom} · ${pp.price}`);
+  } else {
+    items.push(`BIÈRE DU MOMENT · ${D.biereDuMoment.nom} · ${D.biereDuMoment.prix}`);
+  }
 
   // Menu de la semaine — formule complète
   const complet = D.menuSemaine.formules.find((f) => f.nom.toLowerCase().includes("complet"));
@@ -55,6 +62,7 @@ function buildStrip(D: typeof BASE_DATA): string[] {
 
 export default async function Home() {
   const D = await loadAdminData().catch(() => BASE_DATA);
+  const momentBeer = D.bieres.find((b) => b.id === D.biereDuMomentId) ?? null;
   const m = D.menuSemaine;
   const e0 = m.entrees[0] ?? { nom: "", prix: "" };
   const p0 = m.plats[0] ?? { nom: "", desc: "", prix: "" };
@@ -159,22 +167,34 @@ export default async function Home() {
       </div>
 
       {/* ===== BIÈRE DU MOMENT ===== */}
+      {(momentBeer ?? true) && (
       <section className="tight mob-hide">
         <div className="wrap">
           <div className="feature-bar" data-anim>
-            <div className="fb-bottle">capsule</div>
+            <div className="fb-bottle">
+              {momentBeer ? (
+                <BeerVisual beer={momentBeer} />
+              ) : (
+                <span style={{ opacity: 0.3 }}>capsule</span>
+              )}
+            </div>
             <div>
-              <span className="fb-tag">★ {D.biereDuMoment.tag}</span>
-              <h3>{D.biereDuMoment.nom}</h3>
+              <span className="fb-tag">★ Bière du moment</span>
+              <h3>{momentBeer ? momentBeer.nom : D.biereDuMoment.nom}</h3>
               <p className="fb-desc">
-                {D.biereDuMoment.style} · {D.biereDuMoment.brasserie}.{" "}
-                {D.biereDuMoment.descriptif}
+                {momentBeer
+                  ? `${momentBeer.styleLabel} · ${momentBeer.brasserie}. ${momentBeer.note}`
+                  : `${D.biereDuMoment.style} · ${D.biereDuMoment.brasserie}. ${D.biereDuMoment.descriptif}`}
               </p>
               <span className="fb-label">— le choix d&apos;Henri</span>
             </div>
             <div className="fb-meta">
-              <span className="fb-price">{D.biereDuMoment.prix}</span>
-              <span className="fb-unit">{D.biereDuMoment.unite}</span>
+              <span className="fb-price">
+                {momentBeer ? primaryPrice(momentBeer).price : D.biereDuMoment.prix}
+              </span>
+              <span className="fb-unit">
+                {momentBeer ? primaryPrice(momentBeer).vol : D.biereDuMoment.unite}
+              </span>
             </div>
             <Link
               href="/bieres"
@@ -186,6 +206,7 @@ export default async function Home() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ===== SÉLECTION ===== */}
       <section id="selection" style={{ paddingTop: 32 }}>

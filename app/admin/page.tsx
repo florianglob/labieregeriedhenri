@@ -57,7 +57,6 @@ const PRIX_PAR_FORMAT: Record<Beer["format"], string[]> = {
 type Section =
   | "dashboard"
   | "bieres"
-  | "biereDuMoment"
   | "menu"
   | "evenements"
   | "forfaits"
@@ -68,7 +67,7 @@ type Section =
   | "photos";
 
 const CONFIG_KEYS: (keyof SiteData)[] = [
-  "contact", "biereDuMoment", "tireuse", "etapes", "styles", "origines", "detailsParStyle", "photos", "sticker", "coords",
+  "contact", "biereDuMoment", "biereDuMomentId", "tireuse", "etapes", "styles", "origines", "detailsParStyle", "photos", "sticker", "coords",
 ];
 
 export default function AdminPage() {
@@ -122,7 +121,6 @@ export default function AdminPage() {
     { id: "dashboard",     label: "Tableau de bord" },
     { id: "bieres",        label: "Bières" },
     { id: "boissons",      label: "Boissons & vins" },
-    { id: "biereDuMoment", label: "Bière du moment" },
     { id: "menu",          label: "Menu du midi" },
     { id: "evenements",    label: "Événements" },
     { id: "forfaits",      label: "Forfaits tireuse" },
@@ -298,28 +296,18 @@ export default function AdminPage() {
           )}
 
           {section === "bieres" && (
-            <BieresEditor beers={data.bieres} onSave={(bieres) => persist({ bieres })} />
+            <BieresEditor
+              beers={data.bieres}
+              momentId={data.biereDuMomentId}
+              onSave={(bieres) => persist({ bieres })}
+              onSetMoment={(id) => persist({ biereDuMomentId: id })}
+            />
           )}
 
           {section === "boissons" && (
             <BoissonEditor boissons={data.boissons} onSave={(boissons) => persist({ boissons })} />
           )}
 
-          {section === "biereDuMoment" && (
-            <SimpleFormEditor
-              title="Bière du moment"
-              fields={[
-                { key: "nom",        label: "Nom" },
-                { key: "brasserie",  label: "Brasserie" },
-                { key: "style",      label: "Style affiché (ex: IPA · 6,2°)" },
-                { key: "descriptif", label: "Descriptif" },
-                { key: "prix",       label: "Prix" },
-                { key: "unite",      label: "Unité (ex: le 25cl · à la pression)" },
-              ]}
-              values={data.biereDuMoment}
-              onSave={(v) => persist({ biereDuMoment: { ...data.biereDuMoment, ...v } })}
-            />
-          )}
 
           {section === "menu" && (
             <MenuEditor menu={data.menuSemaine} onSave={(m) => persist({ menuSemaine: m })} />
@@ -582,7 +570,12 @@ function HorairesEditor({ horaires, onSave }: { horaires: SiteData["horaires"]; 
   );
 }
 
-function BieresEditor({ beers, onSave }: { beers: Beer[]; onSave: (b: Beer[]) => void }) {
+function BieresEditor({ beers, momentId, onSave, onSetMoment }: {
+  beers: Beer[];
+  momentId?: number;
+  onSave: (b: Beer[]) => void;
+  onSetMoment: (id: number | undefined) => void;
+}) {
   const [list, setList] = useState<Beer[]>(beers);
   const [editing, setEditing] = useState<Beer | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -617,11 +610,20 @@ function BieresEditor({ beers, onSave }: { beers: Beer[]; onSave: (b: Beer[]) =>
               <div className="a-item-right">
                 <span className="a-badge">{b.format}</span>
                 <span className="a-item-price">{Object.values(b.prix)[0]}</span>
+                <button
+                  className="a-icon-btn"
+                  title={b.id === momentId ? "Bière du moment (cliquer pour retirer)" : "Définir comme bière du moment"}
+                  onClick={() => onSetMoment(b.id === momentId ? undefined : b.id)}
+                  style={{ color: b.id === momentId ? "var(--dore)" : undefined, fontSize: 16 }}
+                >★</button>
                 <button className="a-icon-btn" onClick={() => setEditing(b)} title="Modifier">✎</button>
                 <button className="a-icon-btn danger" onClick={() => remove(b.id)} title="Supprimer">✕</button>
               </div>
             </div>
-            {b.coup && <span className="a-badge orange" style={{ alignSelf: "flex-start" }}>❤ Coup de cœur</span>}
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {b.id === momentId && <span className="a-badge orange" style={{ alignSelf: "flex-start" }}>★ Bière du moment</span>}
+              {b.coup && <span className="a-badge orange" style={{ alignSelf: "flex-start" }}>❤ Coup de cœur</span>}
+            </div>
           </div>
         ))}
       </div>
