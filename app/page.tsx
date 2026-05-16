@@ -351,7 +351,7 @@ export default async function Home() {
 
               <div style={{ marginTop: 24, display: "flex", gap: 10, flexWrap: "wrap" }}>
                 <Link href="/tireuse" className="btn btn-primary">
-                  Voir les forfaits <span className="arrow">→</span>
+                  Voir la sélection de fûts <span className="arrow">→</span>
                 </Link>
                 <Link href="/tireuse#devis" className="btn btn-secondary">
                   Demander un devis
