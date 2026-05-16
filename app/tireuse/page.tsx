@@ -79,7 +79,7 @@ export default function TireusePage() {
                 La tireuse, c&apos;est gratuit.
               </div>
               <div style={{ color: "rgba(245,241,232,0.75)", fontSize: 15, lineHeight: 1.6 }}>
-                Tu paies uniquement les fûts que tu choisis. Le matos, le briefing, les gobelets — c&apos;est offert. Une caution de {D.tireuse.caution} est demandée à la remise du matériel.
+                Tu paies uniquement les fûts que tu choisis. Le matos et le briefing — c&apos;est offert.
               </div>
             </div>
           </div>
@@ -95,7 +95,6 @@ export default function TireusePage() {
           </h2>
           <p style={{ color: "var(--encre-soft)", marginTop: 12, maxWidth: "56ch" }}>
             Prix indicatifs — ils varient selon l&apos;arrivage. {D.tireuse.retrait}.
-            Caution : {D.tireuse.caution}.
           </p>
 
           <div className="chips" style={{ marginTop: 24 }}>
