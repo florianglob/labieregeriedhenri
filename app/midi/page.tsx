@@ -118,54 +118,6 @@ export default async function MidiPage() {
         </div>
       </section>
 
-      {/* Infos pratiques */}
-      <section>
-        <div className="wrap">
-          <div className="duo-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28 }}>
-            <div className="info-card">
-              <h3 style={{ marginBottom: 18 }}>Comment ça marche</h3>
-              <div className="info-block" style={{ borderTop: "1px dashed rgba(91,58,30,0.18)" }}>
-                <div className="label">Réservation</div>
-                <div style={{ fontSize: 15, color: "var(--encre-soft)", lineHeight: 1.55, marginTop: 8 }}>
-                  Pas obligatoire pour 2 personnes, fortement recommandée pour les groupes. On prend des réservations jusqu&apos;à la veille au soir.
-                </div>
-              </div>
-              <div className="info-block">
-                <div className="label">Menu</div>
-                <div style={{ fontSize: 15, color: "var(--encre-soft)", lineHeight: 1.55, marginTop: 8 }}>
-                  Le menu change chaque semaine selon les arrivages. On s&apos;adapte aux allergies sur demande — prévenez-nous à la réservation.
-                </div>
-              </div>
-              <div style={{ marginTop: 18 }}>
-                <Link href="/contact#reserver" className="btn btn-primary">
-                  Réserver une table <span className="arrow">→</span>
-                </Link>
-              </div>
-            </div>
-
-            <div className="info-card" style={{ background: "var(--papier-warm)" }}>
-              <h3 style={{ marginBottom: 18 }}>Pour les groupes</h3>
-              <p style={{ color: "var(--encre-soft)", fontSize: 15, lineHeight: 1.6 }}>
-                À partir de 8 personnes, on peut organiser un repas de groupe avec menu
-                fixe et bières assorties. Contact direct par téléphone ou email.
-              </p>
-              <div className="info-block">
-                <div className="label">Téléphone</div>
-                <div className="value">
-                  <a href={`tel:${D.contact.tel.replace(/\s/g, "")}`}>{D.contact.tel}</a>
-                </div>
-              </div>
-              <div className="info-block">
-                <div className="label">Email</div>
-                <div style={{ fontSize: 16, color: "var(--encre)", marginTop: 4 }}>
-                  <a href={`mailto:${D.contact.email}`}>{D.contact.email}</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <Footer data={D} />
     </>
   );
