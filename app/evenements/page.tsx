@@ -137,52 +137,8 @@ export default function EvenementsPage() {
         </div>
       </section>
 
-      {/* Newsletter */}
-      <section style={{ background: "var(--brun-dark)" }}>
-        <div className="wrap">
-          <div className="duo-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
-            <div>
-              <span className="eyebrow" style={{ color: "var(--dore)" }}>La gazette d&apos;Henri</span>
-              <h2 style={{ marginTop: 14, color: "var(--craie)" }}>
-                Ne rate <span className="scripted" style={{ color: "var(--orange)" }}>aucun événement</span>
-              </h2>
-              <p style={{ color: "rgba(245,241,232,0.7)", marginTop: 16, fontSize: 17 }}>
-                Une fois par mois, on t&apos;envoie les nouveautés, les événements du mois et
-                le menu de la semaine. Pas de spam.
-              </p>
-            </div>
-            <div style={{ background: "rgba(245,241,232,0.07)", borderRadius: "var(--radius-lg)", padding: "36px 32px" }}>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  (e.target as HTMLFormElement).reset();
-                  alert("Merci ! À bientôt dans la gazette.");
-                }}
-              >
-                <div className="form-grid" style={{ gridTemplateColumns: "1fr 1fr" }}>
-                  <div className="field">
-                    <label style={{ color: "var(--dore)" }}>Prénom</label>
-                    <input type="text" placeholder="Henri" required />
-                  </div>
-                  <div className="field">
-                    <label style={{ color: "var(--dore)" }}>Email</label>
-                    <input type="email" placeholder="ton@mail.fr" required />
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  style={{ marginTop: 18, width: "100%", justifyContent: "center" }}
-                >
-                  S&apos;abonner à la gazette <span className="arrow">→</span>
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {selected && <EventModal event={selected} onClose={() => setSelected(null)} />}
+{selected && <EventModal event={selected} onClose={() => setSelected(null)} />}
 
       <Footer data={D} />
     </>
