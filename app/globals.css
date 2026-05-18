@@ -997,7 +997,7 @@ h1 .scripted, h2 .scripted, h3 .scripted {
 .footer a:hover { opacity: 1; color: var(--dore); }
 .footer ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
 .footer .brand-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
-.footer .brand-row img { height: 56px; }
+.footer .brand-row img { height: 56px; width: auto; }
 .footer .brand-row .name { font-family: var(--font-display); font-size: 18px; color: var(--craie); }
 .footer .small-text { font-size: 14px; opacity: 0.7; max-width: 36ch; }
 .footer .newsletter { display: flex; gap: 6px; margin-top: 10px; }
