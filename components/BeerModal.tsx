@@ -78,7 +78,7 @@ export default function BeerModal({ beer, data, onClose }: Props) {
                 <div className="bm-stat-label">Format</div>
                 <div className="bm-stat-value">{formatLabel(beer.format)}</div>
                 <div className="bm-stat-sub">
-                  {beer.format === "pression" ? "au comptoir" : "à emporter"}
+                  au comptoir
                 </div>
               </div>
             </div>
