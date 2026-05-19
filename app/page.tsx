@@ -288,13 +288,10 @@ export default async function Home() {
         <div className="wrap">
           <div className="section-head">
             <div className="left">
-              <span className="eyebrow mob-hide">Le midi · La tireuse</span>
-              <span className="eyebrow desk-hide">Le menu du midi</span>
+              <span className="eyebrow">Le menu du midi</span>
               <h2 style={{ marginTop: 14 }}>
-                <span className="mob-hide">Deux bonnes raisons{" "}
-                <span className="scripted" style={{ fontSize: 58 }}>de revenir</span></span>
-                <span className="desk-hide">Ce midi,{" "}
-                <span className="scripted" style={{ fontSize: 58 }}>qu&apos;est-ce qu&apos;on mange ?</span></span>
+                Ce midi,{" "}
+                <span className="scripted" style={{ fontSize: 58 }}>qu&apos;est-ce qu&apos;on mange ?</span>
               </h2>
             </div>
           </div>
