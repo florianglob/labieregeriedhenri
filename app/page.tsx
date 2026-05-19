@@ -7,7 +7,6 @@ import ScrollAnimations from "@/components/ScrollAnimations";
 import { BASE_DATA, primaryPrice } from "@/lib/data";
 import BeerVisual from "@/components/BeerVisual";
 import { loadAdminData } from "@/lib/supabase";
-
 export const revalidate = 60;
 
 function semaineLabel(): string {
@@ -318,65 +317,64 @@ export default async function Home() {
               </div>
             </div>
 
-            {/* Instagram feed */}
-            <div className="formules mob-hide" style={{ display: "flex", flexDirection: "column" }}>
-              <span className="tag-line">@la_bieregerie_dhenri</span>
-              <h3>On est aussi sur Instagram</h3>
-              <p style={{ color: "var(--encre-soft)", margin: "12px 0 20px" }}>
-                Bières du moment, plats du midi, événements à venir — tout ce qui se
-                passe au comptoir, en direct.
-              </p>
+            {/* Instagram CTA */}
+            <a
+              href={D.contact.instagram}
+              target="_blank"
+              rel="noreferrer"
+              className="formules mob-hide"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                gap: 20,
+                textDecoration: "none",
+                background: "linear-gradient(135deg, #f5e6d0 0%, #ede0cc 50%, #e8d5b8 100%)",
+                borderRadius: "var(--radius-lg)",
+                padding: "48px 32px",
+                border: "1.5px solid rgba(91,58,30,.12)",
+                transition: "box-shadow .2s, transform .2s",
+              }}
+            >
+              {/* Icône Instagram */}
               <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 6,
-                flex: 1,
-                borderRadius: "var(--radius-md)",
-                overflow: "hidden",
+                width: 64, height: 64,
+                background: "linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)",
+                borderRadius: 18,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                flexShrink: 0,
               }}>
-                {[0,1,2,3,4,5].map((i) => (
-                  <a
-                    key={i}
-                    href={D.contact.instagram}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="Voir sur Instagram"
-                    style={{
-                      display: "block",
-                      aspectRatio: "1",
-                      background: `hsl(${30 + i * 8}, ${28 + i * 4}%, ${88 - i * 3}%)`,
-                      position: "relative",
-                      overflow: "hidden",
-                    }}
-                  >
-                    <div style={{
-                      position: "absolute", inset: 0,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      opacity: 0,
-                      transition: "opacity .2s",
-                      background: "rgba(91,58,30,.45)",
-                      color: "#fff",
-                      fontSize: 22,
-                    }}
-                      className="ig-hover"
-                    >
-                      ♡
-                    </div>
-                  </a>
-                ))}
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                  <circle cx="12" cy="12" r="4"/>
+                  <circle cx="17.5" cy="6.5" r="1.2" fill="white" stroke="none"/>
+                </svg>
               </div>
-              <div style={{ marginTop: 18 }}>
-                <a
-                  href={D.contact.instagram}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn btn-primary"
-                  style={{ width: "100%", justifyContent: "center" }}
-                >
-                  Voir notre Instagram <span className="arrow">→</span>
-                </a>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 20, color: "var(--brun-dark)", marginBottom: 6 }}>
+                  On est aussi sur Instagram
+                </div>
+                <div style={{ color: "var(--encre-soft)", fontSize: 15, lineHeight: 1.5 }}>
+                  Bières du moment, plats du midi,<br />événements — tout en direct.
+                </div>
               </div>
-            </div>
+              <div style={{
+                fontWeight: 700,
+                color: "var(--brun)",
+                fontSize: 15,
+                background: "rgba(91,58,30,.08)",
+                padding: "8px 18px",
+                borderRadius: 999,
+                border: "1.5px solid rgba(91,58,30,.15)",
+              }}>
+                @la_bieregerie_dhenri
+              </div>
+              <div style={{ color: "var(--orange)", fontWeight: 600, fontSize: 14 }}>
+                Voir notre profil →
+              </div>
+            </a>
           </div>
         </div>
       </section>
