@@ -91,7 +91,11 @@ export default function AdminPage() {
       setData(next);
       setError(null);
       try {
-        if ("bieres" in patch) { await saveBeers(patch.bieres!); fetch("/api/revalidate", { method: "POST" }); }
+        if ("bieres" in patch) {
+          const freshBeers = await saveBeers(patch.bieres!);
+          fetch("/api/revalidate", { method: "POST" });
+          setData((prev) => ({ ...prev, bieres: freshBeers }));
+        }
         if ("evenementsAvenir" in patch) await saveEvenements(patch.evenementsAvenir!);
         if ("menuSemaine" in patch) await saveMenu(patch.menuSemaine!);
         if ("horaires" in patch) await saveHoraires(patch.horaires!);
@@ -109,7 +113,8 @@ export default function AdminPage() {
         setTimeout(() => setSaved(false), 2500);
       } catch (err) {
         console.error(err);
-        setError("Erreur lors de la sauvegarde. Vérifiez votre connexion.");
+        const msg = (err as { message?: string })?.message ?? "Erreur de connexion";
+        setError(`Erreur : ${msg}`);
       }
     },
     [data]
@@ -1048,6 +1053,32 @@ function MenuEditor({ menu, onSave }: { menu: SiteData["menuSemaine"]; onSave: (
           ))}
         </div>
       ))}
+
+      <div style={{ marginBottom: 28 }}>
+        <h4 style={{ marginBottom: 12 }}>Formules</h4>
+        {m.formules.map((f, i) => (
+          <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8 }}>
+            <input
+              style={{ flex: 2, padding: "8px 12px", border: "1.5px solid rgba(91,58,30,0.18)", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 14 }}
+              placeholder="Nom de la formule" value={f.nom}
+              onChange={(e) => {
+                const next = [...m.formules];
+                next[i] = { ...next[i], nom: e.target.value };
+                setM({ ...m, formules: next });
+              }}
+            />
+            <input
+              style={{ width: 90, padding: "8px 12px", border: "1.5px solid rgba(91,58,30,0.18)", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 14 }}
+              placeholder="Prix" value={f.prix}
+              onChange={(e) => {
+                const next = [...m.formules];
+                next[i] = { ...next[i], prix: e.target.value };
+                setM({ ...m, formules: next });
+              }}
+            />
+          </div>
+        ))}
+      </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 28 }}>
         <div className="field">
