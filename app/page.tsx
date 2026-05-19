@@ -329,50 +329,59 @@ export default async function Home() {
                 alignItems: "center",
                 justifyContent: "center",
                 textAlign: "center",
-                gap: 20,
+                gap: 18,
                 textDecoration: "none",
-                background: "linear-gradient(135deg, #f5e6d0 0%, #ede0cc 50%, #e8d5b8 100%)",
-                borderRadius: "var(--radius-lg)",
-                padding: "48px 32px",
-                border: "1.5px solid rgba(91,58,30,.12)",
-                transition: "box-shadow .2s, transform .2s",
+                transition: "transform .2s, box-shadow .2s",
               }}
             >
-              {/* Icône Instagram */}
+              {/* Icône grande */}
               <div style={{
-                width: 64, height: 64,
-                background: "linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)",
-                borderRadius: 18,
+                width: 76, height: 76,
+                background: "linear-gradient(135deg, #f09433 0%, #e6683c 30%, #dc2743 60%, #bc1888 100%)",
+                borderRadius: 22,
                 display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: "0 8px 28px rgba(220,39,67,.32)",
                 flexShrink: 0,
               }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
                   <circle cx="12" cy="12" r="4"/>
                   <circle cx="17.5" cy="6.5" r="1.2" fill="white" stroke="none"/>
                 </svg>
               </div>
+
+              {/* Texte */}
               <div>
-                <div style={{ fontWeight: 700, fontSize: 20, color: "var(--brun-dark)", marginBottom: 6 }}>
-                  On est aussi sur Instagram
+                <div style={{ fontWeight: 800, fontSize: 22, color: "var(--brun-dark)", lineHeight: 1.2, marginBottom: 8, fontFamily: "var(--font-display)" }}>
+                  Suivez-nous<br />sur Instagram
                 </div>
-                <div style={{ color: "var(--encre-soft)", fontSize: 15, lineHeight: 1.5 }}>
-                  Bières du moment, plats du midi,<br />événements — tout en direct.
+                <div style={{ color: "var(--encre-soft)", fontSize: 14, lineHeight: 1.65 }}>
+                  Bières du moment, ambiance<br />et actus — tout en direct.
                 </div>
               </div>
+
+              {/* Handle */}
               <div style={{
-                fontWeight: 700,
-                color: "var(--brun)",
-                fontSize: 15,
-                background: "rgba(91,58,30,.08)",
-                padding: "8px 18px",
-                borderRadius: 999,
-                border: "1.5px solid rgba(91,58,30,.15)",
+                fontWeight: 700, fontSize: 13,
+                background: "linear-gradient(135deg, #e6683c, #bc1888)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                letterSpacing: ".02em",
               }}>
                 @la_bieregerie_dhenri
               </div>
-              <div style={{ color: "var(--orange)", fontWeight: 600, fontSize: 14 }}>
-                Voir notre profil →
+
+              {/* CTA */}
+              <div style={{
+                background: "linear-gradient(135deg, #f09433, #e6683c, #dc2743, #bc1888)",
+                color: "white",
+                fontWeight: 700,
+                fontSize: 15,
+                padding: "12px 28px",
+                borderRadius: 999,
+                boxShadow: "0 4px 16px rgba(220,39,67,.35)",
+              }}>
+                Voir le profil →
               </div>
             </a>
           </div>

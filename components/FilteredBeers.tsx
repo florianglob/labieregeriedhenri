@@ -101,61 +101,26 @@ export default function FilteredBeers({ beers, data, homeMode = false }: Props) 
       {!homeMode && (
         <section className="tight">
           <div className="wrap">
-            <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "14px", alignItems: "flex-start" }}>
-              <div style={{ fontWeight: 700, color: "var(--brun)", paddingTop: 9, minWidth: 88 }}>
-                Contenant
-              </div>
-              <div className="chips" style={{ margin: 0 }}>
-                {(["all", "pression", "canette", "bouteille"] as const).map((f) => (
-                  <button
-                    key={f}
-                    className={`chip${activeFormat === f ? " active" : ""}`}
-                    onClick={() => setActiveFormat(f)}
-                  >
-                    {f === "all" ? "Tous" : f.charAt(0).toUpperCase() + f.slice(1)}
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ fontWeight: 700, color: "var(--brun)", paddingTop: 9, marginTop: 12 }}>
-                Style
-              </div>
-              <div className="chips" style={{ marginTop: 12 }}>
+            <div className="chips" id="filter-chips">
+              <button
+                className={`chip${activeStyle === "all" ? " active" : ""}`}
+                onClick={() => setActiveStyle("all")}
+              >
+                Toutes <span className="count">{beers.length}</span>
+              </button>
+              {availableStyleLabels.map((label) => (
                 <button
-                  className={`chip${activeStyle === "all" ? " active" : ""}`}
-                  onClick={() => setActiveStyle("all")}
+                  key={label}
+                  className={`chip${activeStyle === label ? " active" : ""}`}
+                  onClick={() => toggleStyle(label)}
                 >
-                  Toutes <span className="count">{beers.length}</span>
+                  {label}{" "}
+                  <span className="count">{beers.filter(b => b.styleLabel === label).length}</span>
                 </button>
-                {availableStyleLabels.map((label) => (
-                  <button
-                    key={label}
-                    className={`chip${activeStyle === label ? " active" : ""}`}
-                    onClick={() => toggleStyle(label)}
-                  >
-                    {label}{" "}
-                    <span className="count">{beers.filter(b => b.styleLabel === label).length}</span>
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ fontWeight: 700, color: "var(--brun)", paddingTop: 9, marginTop: 12 }}>
-                Origine
-              </div>
-              <div className="chips" style={{ marginTop: 12 }}>
-                {availableOrigines.map((o) => (
-                  <button
-                    key={o}
-                    className={`chip${activeOrigines.has(o) ? " active" : ""}`}
-                    onClick={() => toggleOrigine(o)}
-                  >
-                    {o}
-                  </button>
-                ))}
-              </div>
+              ))}
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 24, flexWrap: "wrap", gap: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 16, flexWrap: "wrap", gap: 12 }}>
               <span style={{ fontSize: 14, color: "var(--encre-soft)" }}>
                 <strong style={{ color: "var(--brun)" }}>{filtered.length}</strong> bière{filtered.length !== 1 ? "s" : ""} ·{" "}
                 {hasActiveFilters ? (
