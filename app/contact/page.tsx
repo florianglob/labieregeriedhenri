@@ -103,12 +103,8 @@ export default function ContactPage() {
                 Retiens <span className="scripted">ta table</span>
               </h2>
               <p style={{ color: "var(--encre-soft)", marginTop: 16, fontSize: 16, lineHeight: 1.6 }}>
-                On accepte les réservations pour 2 personnes et plus, uniquement pour
-                le service du midi (mardi au vendredi, 12h–14h). On prend les
-                réservations jusqu&apos;à la veille au soir.
-              </p>
-              <p style={{ color: "var(--encre-soft)", marginTop: 12, fontSize: 16, lineHeight: 1.6 }}>
-                Tu peux aussi appeler directement au{" "}
+                Pas de réservation obligatoire mais fortement conseillé pour s&apos;assurer d&apos;avoir de la place.
+                Tu peux remplir notre formulaire ou appeler directement au{" "}
                 <a href={`tel:${D.contact.tel.replace(/\s/g, "")}`} style={{ color: "var(--orange)", fontWeight: 600 }}>
                   {D.contact.tel}
                 </a>
