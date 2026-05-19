@@ -321,41 +321,63 @@ export default async function Home() {
               </div>
             </div>
 
-            {/* Forfaits tireuse */}
-            <div className="formules mob-hide">
-              <span className="tag-line">Tireuse 2 becs · à retirer chez nous</span>
-              <h3>La pression à emporter</h3>
-              <p style={{ color: "var(--encre-soft)", margin: "12px 0 4px" }}>
-                Anniversaire, mariage, pot de départ — choisis ton forfait et tes fûts,
-                tu viens récupérer le matos.
+            {/* Instagram feed */}
+            <div className="formules mob-hide" style={{ display: "flex", flexDirection: "column" }}>
+              <span className="tag-line">@la_bieregerie_dhenri</span>
+              <h3>On est aussi sur Instagram</h3>
+              <p style={{ color: "var(--encre-soft)", margin: "12px 0 20px" }}>
+                Bières du moment, plats du midi, événements à venir — tout ce qui se
+                passe au comptoir, en direct.
               </p>
-
-              {D.forfaits.map((f) => (
-                <div key={f.id} className={`formule-item${f.featured ? " featured" : ""}`}>
-                  <div
-                    className="icon"
-                    style={f.featured ? { background: "var(--dore)", color: "var(--brun-dark)" } : {}}
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: 6,
+                flex: 1,
+                borderRadius: "var(--radius-md)",
+                overflow: "hidden",
+              }}>
+                {[0,1,2,3,4,5].map((i) => (
+                  <a
+                    key={i}
+                    href={D.contact.instagram}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Voir sur Instagram"
+                    style={{
+                      display: "block",
+                      aspectRatio: "1",
+                      background: `hsl(${30 + i * 8}, ${28 + i * 4}%, ${88 - i * 3}%)`,
+                      position: "relative",
+                      overflow: "hidden",
+                    }}
                   >
-                    {f.featured ? "★" : f.nom.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="name">
-                      {f.nom}
-                      {f.featured && <span className="badge-pop">Le + demandé</span>}
+                    <div style={{
+                      position: "absolute", inset: 0,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      opacity: 0,
+                      transition: "opacity .2s",
+                      background: "rgba(91,58,30,.45)",
+                      color: "#fff",
+                      fontSize: 22,
+                    }}
+                      className="ig-hover"
+                    >
+                      ♡
                     </div>
-                    <div className="desc">{f.kicker} · {f.addon.toLowerCase()}</div>
-                  </div>
-                  <div className="price">{f.base.replace("à partir de ", "dès ")}</div>
-                </div>
-              ))}
-
-              <div style={{ marginTop: 24, display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <Link href="/tireuse" className="btn btn-primary">
-                  Voir la sélection de fûts <span className="arrow">→</span>
-                </Link>
-                <Link href="/tireuse#devis" className="btn btn-secondary">
-                  Demander un devis
-                </Link>
+                  </a>
+                ))}
+              </div>
+              <div style={{ marginTop: 18 }}>
+                <a
+                  href={D.contact.instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-primary"
+                  style={{ width: "100%", justifyContent: "center" }}
+                >
+                  Voir notre Instagram <span className="arrow">→</span>
+                </a>
               </div>
             </div>
           </div>

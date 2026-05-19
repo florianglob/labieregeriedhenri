@@ -30,6 +30,23 @@ export default function FilteredBeers({ beers, data, homeMode = false }: Props) 
   const [view, setView] = useState<"grid" | "list">("grid");
   const [sort, setSort] = useState("coup");
 
+  // Styles disponibles selon les origines et format sélectionnés
+  const availableStyles = useMemo(() => {
+    let base = beers;
+    if (!homeMode && activeFormat !== "all") base = base.filter(b => b.format === activeFormat);
+    if (!homeMode && activeOrigines.size > 0) base = base.filter(b => activeOrigines.has(b.origine));
+    const styleIds = new Set(base.map(b => b.style));
+    return data.styles.filter(s => s.id === "all" || styleIds.has(s.id as never));
+  }, [beers, data.styles, activeFormat, activeOrigines, homeMode]);
+
+  // Origines disponibles selon le style et format sélectionnés
+  const availableOrigines = useMemo(() => {
+    let base = beers;
+    if (!homeMode && activeFormat !== "all") base = base.filter(b => b.format === activeFormat);
+    if (activeStyle !== "all") base = base.filter(b => b.style === activeStyle);
+    return data.origines.filter(o => base.some(b => b.origine === o));
+  }, [beers, data.origines, activeFormat, activeStyle, homeMode]);
+
   const filtered = useMemo(() => {
     let list = beers;
     if (activeStyle !== "all") list = list.filter((b) => b.style === activeStyle);
@@ -83,7 +100,7 @@ export default function FilteredBeers({ beers, data, homeMode = false }: Props) 
                 Style
               </div>
               <div className="chips" style={{ marginTop: 12 }}>
-                {data.styles.map((s) => (
+                {availableStyles.map((s) => (
                   <button
                     key={s.id}
                     className={`chip${activeStyle === s.id ? " active" : ""}`}
@@ -101,7 +118,7 @@ export default function FilteredBeers({ beers, data, homeMode = false }: Props) 
                 Origine
               </div>
               <div className="chips" style={{ marginTop: 12 }}>
-                {data.origines.map((o) => (
+                {availableOrigines.map((o) => (
                   <button
                     key={o}
                     className={`chip${activeOrigines.has(o) ? " active" : ""}`}
@@ -132,7 +149,7 @@ export default function FilteredBeers({ beers, data, homeMode = false }: Props) 
 
       {homeMode && (
         <div className="chips" id="filter-chips">
-          {data.styles.map((s) => (
+          {availableStyles.map((s) => (
             <button
               key={s.id}
               className={`chip${activeStyle === s.id ? " active" : ""}`}

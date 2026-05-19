@@ -128,51 +128,6 @@ export default function BeerModal({ beer, data, onClose }: Props) {
               </div>
             )}
 
-            {/* Détails passionnés */}
-            <div className="bm-section">
-              <span className="script script-md bm-section-title">
-                Pour les passionnés
-              </span>
-              <dl className="bm-details">
-                {d.houblons && (
-                  <div className="bm-detail-row">
-                    <dt>Houblons</dt>
-                    <dd>{d.houblons}</dd>
-                  </div>
-                )}
-                {d.malts && (
-                  <div className="bm-detail-row">
-                    <dt>Malts</dt>
-                    <dd>{d.malts}</dd>
-                  </div>
-                )}
-                {d.fermentation && (
-                  <div className="bm-detail-row">
-                    <dt>Fermentation</dt>
-                    <dd>{d.fermentation}</dd>
-                  </div>
-                )}
-                {d.service && (
-                  <div className="bm-detail-row">
-                    <dt>Service</dt>
-                    <dd>{d.service}</dd>
-                  </div>
-                )}
-                {d.garde && (
-                  <div className="bm-detail-row">
-                    <dt>Garde</dt>
-                    <dd>{d.garde}</dd>
-                  </div>
-                )}
-                {d.accord && (
-                  <div className="bm-detail-row">
-                    <dt>L&apos;accord d&apos;Henri</dt>
-                    <dd>{d.accord}</dd>
-                  </div>
-                )}
-              </dl>
-            </div>
-
             {/* Histoire */}
             {d.histoire && (
               <div className="bm-histoire">

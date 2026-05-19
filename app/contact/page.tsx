@@ -103,9 +103,9 @@ export default function ContactPage() {
                 Retiens <span className="scripted">ta table</span>
               </h2>
               <p style={{ color: "var(--encre-soft)", marginTop: 16, fontSize: 16, lineHeight: 1.6 }}>
-                On accepte les réservations pour 2 personnes et plus. Pour le midi, on
-                prend les réservations jusqu&apos;à la veille au soir. Pour le soir, jusqu&apos;à
-                18h le jour même.
+                On accepte les réservations pour 2 personnes et plus, uniquement pour
+                le service du midi (mardi au vendredi, 12h–14h). On prend les
+                réservations jusqu&apos;à la veille au soir.
               </p>
               <p style={{ color: "var(--encre-soft)", marginTop: 12, fontSize: 16, lineHeight: 1.6 }}>
                 Tu peux aussi appeler directement au{" "}
@@ -167,11 +167,11 @@ export default function ContactPage() {
                       <label>Heure</label>
                       <select name="heure">
                         <option>12h00</option>
+                        <option>12h15</option>
                         <option>12h30</option>
-                        <option>19h00</option>
-                        <option>19h30</option>
-                        <option>20h00</option>
-                        <option>20h30</option>
+                        <option>12h45</option>
+                        <option>13h00</option>
+                        <option>13h15</option>
                       </select>
                     </div>
                     <div className="field">
@@ -184,8 +184,6 @@ export default function ContactPage() {
                       <label>Type de visite</label>
                       <select name="type">
                         <option>Déjeuner (midi)</option>
-                        <option>Dîner / soirée</option>
-                        <option>Afterwork</option>
                         <option>Occasion spéciale</option>
                       </select>
                     </div>
@@ -216,20 +214,24 @@ export default function ContactPage() {
           <div style={{ background: "var(--brun-dark)", borderRadius: "var(--radius-lg)", padding: "56px 0" }}>
             <div className="duo-grid" style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 48, alignItems: "center" }}>
               <div>
-                <span className="eyebrow" style={{ color: "var(--dore)" }}>Privatisation</span>
+                <span className="eyebrow" style={{ color: "var(--dore)" }}>Événements privatisés</span>
                 <h2 style={{ marginTop: 14, color: "var(--craie)" }}>
-                  Le bar est <span className="scripted" style={{ color: "var(--orange)" }}>à toi</span>
+                  Réserve <span className="scripted" style={{ color: "var(--orange)" }}>ton espace</span>
                 </h2>
                 <p style={{ color: "rgba(245,241,232,0.7)", marginTop: 16, fontSize: 16, lineHeight: 1.6 }}>
-                  Anniversaire, pot de départ, team building, événement d&apos;entreprise —
-                  on privatise la salle et on s&apos;occupe des bières, du menu et de
-                  l&apos;ambiance.
+                  Anniversaire, pot de départ, afterwork, repas d&apos;équipe — tu peux
+                  réserver une partie du bar ou la terrasse pour ton événement. On
+                  s&apos;occupe des bières, du menu et de l&apos;ambiance.
+                </p>
+                <p style={{ color: "rgba(245,241,232,0.55)", marginTop: 10, fontSize: 14, lineHeight: 1.6 }}>
+                  La privatisation totale du bar n&apos;est pas proposée, mais on trouve
+                  toujours la bonne configuration pour que ton groupe soit à l&apos;aise.
                 </p>
                 <div style={{ display: "flex", gap: 32, marginTop: 32, flexWrap: "wrap" }}>
                   {[
-                    { val: "60", lbl: "places assises" },
-                    { val: "90", lbl: "debout" },
-                    { val: "3h+", lbl: "formules soirée" },
+                    { val: "Partie", lbl: "du bar ou terrasse" },
+                    { val: "Midi", lbl: "ou soirée" },
+                    { val: "Sur", lbl: "devis / demande" },
                   ].map((s) => (
                     <div key={s.lbl}>
                       <div style={{ fontFamily: "var(--font-display)", fontSize: 32, color: "var(--dore)" }}>{s.val}</div>
