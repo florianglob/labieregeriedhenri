@@ -232,56 +232,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ===== CETTE SEMAINE ===== */}
-      <section style={{ background: "var(--papier-warm)" }}>
-        <div className="wrap">
-          <div className="section-head">
-            <div className="left">
-              <span className="eyebrow">Cette semaine</span>
-              <h2 style={{ marginTop: 14 }}>
-                Ce qui se{" "}
-                <span className="scripted" style={{ fontSize: 48 }}>trame</span>{" "}
-                au comptoir
-              </h2>
-            </div>
-            <Link href="/evenements" className="btn btn-ghost">
-              Tout l&apos;agenda <span className="arrow">→</span>
-            </Link>
-          </div>
-          <div className="events-grid">
-            {D.evenementsAvenir.slice(0, 3).map((e, i) => (
-              <Link key={e.id} className="event-card" href={`/evenements#ev-${e.id}`}>
-                <div className="img" data-anim="fade" style={{ transitionDelay: `${i * 100}ms` }}>
-                  <span className="tag">{e.tag}</span>
-                  <span className="date">
-                    <span className="d">{e.jour}</span>
-                    <span className="m">{e.mois}</span>
-                  </span>
-                  {e.photo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={e.photo} alt={e.titre} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  ) : (
-                    <div className="ph">
-                      <div className="ph-inner">
-                        <span className="ph-tag">PHOTO ÉVÉNEMENT</span>
-                        <span className="ph-dim">800×800 · {e.tag.toLowerCase()}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className="body">
-                  <h4>{e.titre}</h4>
-                  <div className="meta-line">
-                    <span>● {e.heure}</span>
-                    <span>{e.desc}</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ===== MIDI + TIREUSE ===== */}
       <section id="midi-tireuse">
         <div className="wrap">
@@ -384,6 +334,56 @@ export default async function Home() {
                 Voir le profil →
               </div>
             </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== CETTE SEMAINE ===== */}
+      <section style={{ background: "var(--papier-warm)" }}>
+        <div className="wrap">
+          <div className="section-head">
+            <div className="left">
+              <span className="eyebrow">Cette semaine</span>
+              <h2 style={{ marginTop: 14 }}>
+                Ce qui se{" "}
+                <span className="scripted" style={{ fontSize: 48 }}>trame</span>{" "}
+                au comptoir
+              </h2>
+            </div>
+            <Link href="/evenements" className="btn btn-ghost">
+              Tout l&apos;agenda <span className="arrow">→</span>
+            </Link>
+          </div>
+          <div className="events-grid">
+            {D.evenementsAvenir.slice(0, 3).map((e, i) => (
+              <Link key={e.id} className="event-card" href={`/evenements#ev-${e.id}`}>
+                <div className="img" data-anim="fade" style={{ transitionDelay: `${i * 100}ms` }}>
+                  <span className="tag">{e.tag}</span>
+                  <span className="date">
+                    <span className="d">{e.jour}</span>
+                    <span className="m">{e.mois}</span>
+                  </span>
+                  {e.photo ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={e.photo} alt={e.titre} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  ) : (
+                    <div className="ph">
+                      <div className="ph-inner">
+                        <span className="ph-tag">PHOTO ÉVÉNEMENT</span>
+                        <span className="ph-dim">800×800 · {e.tag.toLowerCase()}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="body">
+                  <h4>{e.titre}</h4>
+                  <div className="meta-line">
+                    <span>● {e.heure}</span>
+                    <span>{e.desc}</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
