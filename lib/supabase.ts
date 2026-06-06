@@ -132,13 +132,17 @@ function dbToBoisson(r: Row): Boisson {
 // ---- Chargement complet (admin + pages publiques) ----
 
 export async function loadAdminData(adminMode = false): Promise<SiteData> {
+  const today = new Date().toISOString().split("T")[0];
   const beersQuery = adminMode
     ? supabase.from("beers").select("*").order("position")
     : supabase.from("beers").select("*").eq("actif", true).order("position");
+  const eventsQuery = adminMode
+    ? supabase.from("evenements").select("*").eq("actif", true).order("date_event")
+    : supabase.from("evenements").select("*").eq("actif", true).gte("date_event", today).order("date_event");
   const [beersR, eventsR, menuR, horairesR, forfaitsR, futsR, boissonsR, configR] =
     await Promise.all([
       beersQuery,
-      supabase.from("evenements").select("*").eq("actif", true).order("date_event"),
+      eventsQuery,
       supabase.from("menu_semaine").select("*").eq("actif", true).order("id", { ascending: false }).limit(1),
       supabase.from("horaires").select("*").order("position"),
       supabase.from("forfaits").select("*").order("position"),
