@@ -79,7 +79,7 @@ export default function AdminPage() {
   const [navOpen, setNavOpen] = useState(false);
 
   useEffect(() => {
-    loadAdminData()
+    loadAdminData(true)
       .then(setData)
       .catch(() => setData(BASE_DATA))
       .finally(() => setLoading(false));
@@ -91,7 +91,11 @@ export default function AdminPage() {
       setData(next);
       setError(null);
       try {
-        if ("bieres" in patch) await saveBeers(patch.bieres!);
+        if ("bieres" in patch) {
+          const freshBeers = await saveBeers(patch.bieres!);
+          fetch("/api/revalidate", { method: "POST" });
+          setData((prev) => ({ ...prev, bieres: freshBeers }));
+        }
         if ("evenementsAvenir" in patch) await saveEvenements(patch.evenementsAvenir!);
         if ("menuSemaine" in patch) await saveMenu(patch.menuSemaine!);
         if ("horaires" in patch) await saveHoraires(patch.horaires!);
@@ -109,7 +113,8 @@ export default function AdminPage() {
         setTimeout(() => setSaved(false), 2500);
       } catch (err) {
         console.error(err);
-        setError("Erreur lors de la sauvegarde. Vérifiez votre connexion.");
+        const msg = (err as { message?: string })?.message ?? "Erreur de connexion";
+        setError(`Erreur : ${msg}`);
       }
     },
     [data]
@@ -552,7 +557,7 @@ function BieresEditor({ beers, momentId, onSave, onSetMoment }: {
   const [isNew, setIsNew] = useState(false);
 
   function newBeer(): Beer {
-    return { id: Date.now(), nom: "", brasserie: "", style: "blonde", styleLabel: "Blonde", origine: "France", deg: "5,0°", format: "pression", coup: false, note: "", prix: { "25cl": "", "50cl": "" } };
+    return { id: Date.now(), nom: "", brasserie: "", style: "blonde", styleLabel: "Blonde", origine: "France", deg: "5,0°", format: "pression", coup: false, actif: true, note: "", prix: { "25cl": "", "50cl": "" } };
   }
 
   function update(updated: Beer) {
@@ -565,20 +570,28 @@ function BieresEditor({ beers, momentId, onSave, onSetMoment }: {
     setList(next); onSave(next);
   }
 
+  function toggleActif(id: number) {
+    const next = list.map((b) => b.id === id ? { ...b, actif: !(b.actif ?? true) } : b);
+    setList(next); onSave(next);
+  }
+
   return (
     <div>
       <button className="btn btn-primary btn-sm" style={{ marginBottom: 20 }} onClick={() => { setIsNew(true); setEditing(newBeer()); }}>
         + Ajouter une bière
       </button>
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {list.map((b) => (
-          <div key={b.id} className="a-item">
+        {list.map((b) => {
+          const actif = b.actif ?? true;
+          return (
+          <div key={b.id} className="a-item" style={{ opacity: actif ? 1 : 0.5 }}>
             <div className="a-item-head">
               <div>
                 <span className="a-item-name">{b.nom}</span>
                 <span className="a-item-meta">{b.brasserie} · {b.styleLabel} · {b.deg}</span>
               </div>
               <div className="a-item-right">
+                {!actif && <span className="a-badge" style={{ background: "rgba(91,58,30,0.12)", color: "var(--encre-soft)" }}>masquée</span>}
                 <span className="a-badge">{b.format}</span>
                 <span className="a-item-price">{Object.values(b.prix)[0]}</span>
                 <button
@@ -587,6 +600,12 @@ function BieresEditor({ beers, momentId, onSave, onSetMoment }: {
                   onClick={() => onSetMoment(b.id === momentId ? undefined : b.id)}
                   style={{ color: b.id === momentId ? "var(--dore)" : undefined, fontSize: 16 }}
                 >★</button>
+                <button
+                  className="a-icon-btn"
+                  title={actif ? "Masquer (rupture de stock)" : "Remettre en carte"}
+                  onClick={() => toggleActif(b.id)}
+                  style={{ fontSize: 15, color: actif ? "var(--encre-soft)" : "var(--orange)" }}
+                >{actif ? "👁" : "🚫"}</button>
                 <button className="a-icon-btn" onClick={() => setEditing(b)} title="Modifier">✎</button>
                 <button className="a-icon-btn danger" onClick={() => remove(b.id)} title="Supprimer">✕</button>
               </div>
@@ -596,7 +615,8 @@ function BieresEditor({ beers, momentId, onSave, onSetMoment }: {
               {b.coup && <span className="a-badge orange" style={{ alignSelf: "flex-start" }}>❤ Coup de cœur</span>}
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
       {editing && <BeerEditModal beer={editing} isNew={isNew} onSave={update} onClose={() => { setEditing(null); setIsNew(false); }} />}
     </div>
@@ -1033,6 +1053,32 @@ function MenuEditor({ menu, onSave }: { menu: SiteData["menuSemaine"]; onSave: (
           ))}
         </div>
       ))}
+
+      <div style={{ marginBottom: 28 }}>
+        <h4 style={{ marginBottom: 12 }}>Formules</h4>
+        {m.formules.map((f, i) => (
+          <div key={i} style={{ display: "flex", gap: 10, marginBottom: 8 }}>
+            <input
+              style={{ flex: 2, padding: "8px 12px", border: "1.5px solid rgba(91,58,30,0.18)", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 14 }}
+              placeholder="Nom de la formule" value={f.nom}
+              onChange={(e) => {
+                const next = [...m.formules];
+                next[i] = { ...next[i], nom: e.target.value };
+                setM({ ...m, formules: next });
+              }}
+            />
+            <input
+              style={{ width: 90, padding: "8px 12px", border: "1.5px solid rgba(91,58,30,0.18)", borderRadius: 8, fontFamily: "var(--font-body)", fontSize: 14 }}
+              placeholder="Prix" value={f.prix}
+              onChange={(e) => {
+                const next = [...m.formules];
+                next[i] = { ...next[i], prix: e.target.value };
+                setM({ ...m, formules: next });
+              }}
+            />
+          </div>
+        ))}
+      </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 28 }}>
         <div className="field">

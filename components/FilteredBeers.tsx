@@ -8,7 +8,7 @@ import BeerList from "./BeerList";
 interface Props {
   beers: Beer[];
   data: SiteData;
-  homeMode?: boolean; // show max 8, no list view
+  homeMode?: boolean;
 }
 
 const PRICE_ORDER = ["25cl", "33cl", "50cl", "75cl", "pichet"];
@@ -24,18 +24,51 @@ function parseDeg(b: Beer): number {
 }
 
 export default function FilteredBeers({ beers, data, homeMode = false }: Props) {
-  const [activeStyle, setActiveStyle] = useState("all");
+  const [activeStyle, setActiveStyle] = useState("all"); // "all" ou un styleLabel
   const [activeFormat, setActiveFormat] = useState("all");
   const [activeOrigines, setActiveOrigines] = useState<Set<string>>(new Set());
   const [view, setView] = useState<"grid" | "list">("grid");
   const [sort, setSort] = useState("coup");
 
+  // Styles uniques tirés des vraies données (styleLabel)
+  const allStyleLabels = useMemo(() =>
+    [...new Set(beers.map(b => b.styleLabel))].sort((a, b) => a.localeCompare(b, "fr")),
+    [beers]
+  );
+
+  // Origines uniques tirées des vraies données
+  const allOriginesFromBeers = useMemo(() =>
+    [...new Set(beers.map(b => b.origine))].sort((a, b) => a.localeCompare(b, "fr")),
+    [beers]
+  );
+
+  // Styles disponibles selon les filtres origine + format actifs.
+  // On inclut toujours le style actif pour que son bouton reste visible (déselection possible).
+  const availableStyleLabels = useMemo(() => {
+    let base = beers;
+    if (!homeMode && activeFormat !== "all") base = base.filter(b => b.format === activeFormat);
+    if (!homeMode && activeOrigines.size > 0) base = base.filter(b => activeOrigines.has(b.origine));
+    const available = new Set(base.map(b => b.styleLabel));
+    if (activeStyle !== "all") available.add(activeStyle);
+    return allStyleLabels.filter(l => available.has(l));
+  }, [beers, activeFormat, activeOrigines, activeStyle, allStyleLabels, homeMode]);
+
+  // Origines disponibles selon les filtres style + format actifs.
+  // On inclut toujours les origines actives pour que leurs boutons restent visibles.
+  const availableOrigines = useMemo(() => {
+    let base = beers;
+    if (!homeMode && activeFormat !== "all") base = base.filter(b => b.format === activeFormat);
+    if (activeStyle !== "all") base = base.filter(b => b.styleLabel === activeStyle);
+    const available = new Set(base.map(b => b.origine));
+    activeOrigines.forEach(o => available.add(o));
+    return allOriginesFromBeers.filter(o => available.has(o));
+  }, [beers, activeFormat, activeStyle, activeOrigines, allOriginesFromBeers, homeMode]);
+
   const filtered = useMemo(() => {
     let list = beers;
-    if (activeStyle !== "all") list = list.filter((b) => b.style === activeStyle);
-    if (!homeMode && activeFormat !== "all") list = list.filter((b) => b.format === activeFormat);
-    if (!homeMode && activeOrigines.size > 0)
-      list = list.filter((b) => activeOrigines.has(b.origine));
+    if (activeStyle !== "all") list = list.filter(b => b.styleLabel === activeStyle);
+    if (!homeMode && activeFormat !== "all") list = list.filter(b => b.format === activeFormat);
+    if (!homeMode && activeOrigines.size > 0) list = list.filter(b => activeOrigines.has(b.origine));
 
     if (!homeMode) {
       switch (sort) {
@@ -50,73 +83,47 @@ export default function FilteredBeers({ beers, data, homeMode = false }: Props) 
   }, [beers, activeStyle, activeFormat, activeOrigines, sort, homeMode]);
 
   function toggleOrigine(o: string) {
-    setActiveOrigines((prev) => {
+    setActiveOrigines(prev => {
       const next = new Set(prev);
       next.has(o) ? next.delete(o) : next.add(o);
       return next;
     });
   }
 
+  function toggleStyle(label: string) {
+    setActiveStyle(prev => prev === label ? "all" : label);
+  }
+
+  const hasActiveFilters = activeStyle !== "all" || activeFormat !== "all" || activeOrigines.size > 0;
+
   return (
     <>
       {!homeMode && (
         <section className="tight">
           <div className="wrap">
-            {/* Filters */}
-            <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: "14px", alignItems: "flex-start" }}>
-              <div style={{ fontWeight: 700, color: "var(--brun)", paddingTop: 9, minWidth: 88 }}>
-                Contenant
-              </div>
-              <div className="chips" style={{ margin: 0 }}>
-                {(["all", "pression", "canette", "bouteille"] as const).map((f) => (
-                  <button
-                    key={f}
-                    className={`chip${activeFormat === f ? " active" : ""}`}
-                    onClick={() => setActiveFormat(f)}
-                  >
-                    {f === "all" ? "Tous" : f.charAt(0).toUpperCase() + f.slice(1)}
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ fontWeight: 700, color: "var(--brun)", paddingTop: 9, marginTop: 12 }}>
-                Style
-              </div>
-              <div className="chips" style={{ marginTop: 12 }}>
-                {data.styles.map((s) => (
-                  <button
-                    key={s.id}
-                    className={`chip${activeStyle === s.id ? " active" : ""}`}
-                    onClick={() => setActiveStyle(s.id)}
-                  >
-                    {s.label}{" "}
-                    <span className="count">
-                      {s.id === "all" ? beers.length : beers.filter((b) => b.style === s.id).length}
-                    </span>
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ fontWeight: 700, color: "var(--brun)", paddingTop: 9, marginTop: 12 }}>
-                Origine
-              </div>
-              <div className="chips" style={{ marginTop: 12 }}>
-                {data.origines.map((o) => (
-                  <button
-                    key={o}
-                    className={`chip${activeOrigines.has(o) ? " active" : ""}`}
-                    onClick={() => toggleOrigine(o)}
-                  >
-                    {o}
-                  </button>
-                ))}
-              </div>
+            <div className="chips" id="filter-chips">
+              <button
+                className={`chip${activeStyle === "all" ? " active" : ""}`}
+                onClick={() => setActiveStyle("all")}
+              >
+                Toutes <span className="count">{beers.length}</span>
+              </button>
+              {availableStyleLabels.map((label) => (
+                <button
+                  key={label}
+                  className={`chip${activeStyle === label ? " active" : ""}`}
+                  onClick={() => toggleStyle(label)}
+                >
+                  {label}{" "}
+                  <span className="count">{beers.filter(b => b.styleLabel === label).length}</span>
+                </button>
+              ))}
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 24, flexWrap: "wrap", gap: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 16, flexWrap: "wrap", gap: 12 }}>
               <span style={{ fontSize: 14, color: "var(--encre-soft)" }}>
-                <strong style={{ color: "var(--brun)" }}>{filtered.length}</strong> bière{filtered.length !== 1 ? "s" : ""} · {" "}
-                {activeStyle !== "all" || activeFormat !== "all" || activeOrigines.size > 0 ? (
+                <strong style={{ color: "var(--brun)" }}>{filtered.length}</strong> bière{filtered.length !== 1 ? "s" : ""} ·{" "}
+                {hasActiveFilters ? (
                   <button
                     style={{ background: "none", border: "none", color: "var(--orange)", fontWeight: 600, cursor: "pointer", padding: 0, fontSize: 14 }}
                     onClick={() => { setActiveStyle("all"); setActiveFormat("all"); setActiveOrigines(new Set()); }}
@@ -132,16 +139,20 @@ export default function FilteredBeers({ beers, data, homeMode = false }: Props) 
 
       {homeMode && (
         <div className="chips" id="filter-chips">
-          {data.styles.map((s) => (
+          <button
+            className={`chip${activeStyle === "all" ? " active" : ""}`}
+            onClick={() => setActiveStyle("all")}
+          >
+            Toutes <span className="count">{beers.length}</span>
+          </button>
+          {availableStyleLabels.map((label) => (
             <button
-              key={s.id}
-              className={`chip${activeStyle === s.id ? " active" : ""}`}
-              onClick={() => setActiveStyle(s.id)}
+              key={label}
+              className={`chip${activeStyle === label ? " active" : ""}`}
+              onClick={() => toggleStyle(label)}
             >
-              {s.label}{" "}
-              <span className="count">
-                {s.id === "all" ? beers.length : beers.filter((b) => b.style === s.id).length}
-              </span>
+              {label}{" "}
+              <span className="count">{beers.filter(b => b.styleLabel === label).length}</span>
             </button>
           ))}
         </div>

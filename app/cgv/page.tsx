@@ -67,7 +67,7 @@ export default async function CGVPage() {
                 {D.contact.adresse.ligne1}, {D.contact.adresse.ligne2}<br />
                 Téléphone : <a href={`tel:${telHref(D.contact.tel)}`} style={{ color: "var(--orange)" }}>{D.contact.tel}</a><br />
                 Email : <a href={`mailto:${D.contact.email}`} style={{ color: "var(--orange)" }}>{D.contact.email}</a><br />
-                SIRET : [À compléter]
+                SIRET : 98972966000013
               </div>
             </Section>
 

@@ -38,12 +38,12 @@ export default async function MentionsPage() {
               <p style={{ margin: "0 0 8px" }}>Le site <strong>labieregeriedhenri.fr</strong> est édité par :</p>
               <div className="papier-card">
                 <strong>La Bièregerie d&apos;Henri</strong><br />
-                Forme juridique : [À compléter — ex : Auto-entrepreneur / SARL]<br />
-                SIRET : [À compléter]<br />
+                Forme juridique : SARL Thomas Beaufreton<br />
+                SIRET : 98972966000013<br />
                 Siège social : {D.contact.adresse.ligne1}, {D.contact.adresse.ligne2}<br />
                 Téléphone : <a href={`tel:${telHref(D.contact.tel)}`} style={{ color: "var(--orange)" }}>{D.contact.tel}</a><br />
                 Email : <a href={`mailto:${D.contact.email}`} style={{ color: "var(--orange)" }}>{D.contact.email}</a><br />
-                Directeur de la publication : [Prénom Nom du gérant]
+                Directeur de la publication : Thomas Beaufreton
               </div>
             </div>
 

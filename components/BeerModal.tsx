@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Beer, SiteData, beerDetails, allPrices, formatLabel, ibuLevel, ebcColor } from "@/lib/data";
+import { Beer, SiteData, beerDetails, allPrices, formatLabel } from "@/lib/data";
 import BeerVisual from "./BeerVisual";
 
 interface Props {
@@ -13,8 +13,6 @@ interface Props {
 export default function BeerModal({ beer, data, onClose }: Props) {
   const d = beerDetails(beer, data);
   const prices = allPrices(beer);
-  const amertumePct = d.amertume?.pct ?? ibuLevel(d.ibu);
-  const amertumeLabelStr = d.amertume?.label ?? null;
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -77,100 +75,12 @@ export default function BeerModal({ beer, data, onClose }: Props) {
                 <div className="bm-stat-sub">alc. vol.</div>
               </div>
               <div className="bm-stat">
-                <div className="bm-stat-label">IBU</div>
-                <div className="bm-stat-value">{d.ibu ?? "—"}</div>
-                <div className="bm-stat-sub">amertume</div>
-              </div>
-              <div className="bm-stat">
-                <div className="bm-stat-label">EBC</div>
-                <div className="bm-stat-value">
-                  {d.ebc != null && (
-                    <span
-                      className="bm-ebc-chip"
-                      style={{ background: ebcColor(d.ebc) }}
-                    />
-                  )}
-                  {d.ebc ?? "—"}
-                </div>
-                <div className="bm-stat-sub">couleur</div>
-              </div>
-              <div className="bm-stat">
                 <div className="bm-stat-label">Format</div>
                 <div className="bm-stat-value">{formatLabel(beer.format)}</div>
                 <div className="bm-stat-sub">
-                  {beer.format === "pression" ? "au comptoir" : "à emporter"}
+                  au comptoir
                 </div>
               </div>
-            </div>
-
-            {/* Amertume bar */}
-            {amertumePct != null && (
-              <div className="bm-bar">
-                {amertumeLabelStr && (
-                  <div className="bm-bar-label">{amertumeLabelStr}</div>
-                )}
-                <div className="bm-bar-track">
-                  <div
-                    className="bm-bar-fill"
-                    style={{ left: `${amertumePct}%`, right: 0 }}
-                  />
-                  <div
-                    className="bm-bar-cursor"
-                    style={{ left: `${amertumePct}%` }}
-                  />
-                </div>
-                <div className="bm-bar-scale">
-                  <span>doux</span>
-                  <span>équilibré</span>
-                  <span>amer</span>
-                  <span>très amer</span>
-                </div>
-              </div>
-            )}
-
-            {/* Détails passionnés */}
-            <div className="bm-section">
-              <span className="script script-md bm-section-title">
-                Pour les passionnés
-              </span>
-              <dl className="bm-details">
-                {d.houblons && (
-                  <div className="bm-detail-row">
-                    <dt>Houblons</dt>
-                    <dd>{d.houblons}</dd>
-                  </div>
-                )}
-                {d.malts && (
-                  <div className="bm-detail-row">
-                    <dt>Malts</dt>
-                    <dd>{d.malts}</dd>
-                  </div>
-                )}
-                {d.fermentation && (
-                  <div className="bm-detail-row">
-                    <dt>Fermentation</dt>
-                    <dd>{d.fermentation}</dd>
-                  </div>
-                )}
-                {d.service && (
-                  <div className="bm-detail-row">
-                    <dt>Service</dt>
-                    <dd>{d.service}</dd>
-                  </div>
-                )}
-                {d.garde && (
-                  <div className="bm-detail-row">
-                    <dt>Garde</dt>
-                    <dd>{d.garde}</dd>
-                  </div>
-                )}
-                {d.accord && (
-                  <div className="bm-detail-row">
-                    <dt>L&apos;accord d&apos;Henri</dt>
-                    <dd>{d.accord}</dd>
-                  </div>
-                )}
-              </dl>
             </div>
 
             {/* Histoire */}

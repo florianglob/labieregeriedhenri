@@ -44,9 +44,9 @@ export default async function CartePage() {
   for (const b of D.boissons) (byCat[b.categorie] ??= []).push(b);
 
   const vins = VIN_CATEGORIES.filter((c) => (byCat[c]?.length ?? 0) > 0);
-  const aperitifs = byCat["Apéritif"] ?? [];
+  const aperitifs = byCat["Apéritif"] ?? byCat["Spiritueux"] ?? [];
   const softs = byCat["Soft"] ?? [];
-  const aPartager = byCat["À partager"] ?? [];
+  const aPartager = byCat["À partager"] ?? byCat["Autre"] ?? [];
 
   return (
     <>

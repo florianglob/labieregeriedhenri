@@ -31,9 +31,7 @@ export default function TireusePage() {
         email:   fd.get("email"),
         tel:     fd.get("tel"),
         date:    fd.get("date"),
-        forfait: fd.get("forfait"),
         invites: fd.get("invites"),
-        duree:   fd.get("duree"),
         message: fd.get("message"),
       }),
     });
@@ -81,47 +79,9 @@ export default function TireusePage() {
                 La tireuse, c&apos;est gratuit.
               </div>
               <div style={{ color: "rgba(245,241,232,0.75)", fontSize: 15, lineHeight: 1.6 }}>
-                Tu paies uniquement les fûts que tu choisis. Le matos, le briefing, les gobelets — c&apos;est offert. Une caution de {D.tireuse.caution} est demandée à la remise du matériel.
+                Tu paies uniquement les fûts que tu choisis. Le matos et le briefing — c&apos;est offert.
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Forfaits */}
-      <section className="tight">
-        <div className="wrap">
-          <span className="eyebrow">Les formules</span>
-          <h2 style={{ marginTop: 14 }}>
-            Choisis ta <span className="scripted">durée</span>
-          </h2>
-          <div className="forfaits">
-            {D.forfaits.map((f) => (
-              <div key={f.id} className={`forfait-card${f.featured ? " featured" : ""}`}>
-                {f.featured && <div className="star-badge">★ Le plus demandé</div>}
-                <div className="kicker">{f.kicker}</div>
-                <h3>{f.nom}</h3>
-                <div className="price">
-                  {f.base === "Gratuit" ? (
-                    <span style={{ color: "var(--orange)", fontSize: 28 }}>Gratuit</span>
-                  ) : (
-                    f.base
-                  )}
-                </div>
-                <p className="desc">{f.desc}</p>
-                <ul>
-                  {f.inclus.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-                <p style={{ fontSize: 12, opacity: 0.65, marginBottom: 12 }}>
-                  {f.addon}
-                </p>
-                <a href="#devis" className="btn btn-primary">
-                  Demander un devis <span className="arrow">→</span>
-                </a>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -135,7 +95,6 @@ export default function TireusePage() {
           </h2>
           <p style={{ color: "var(--encre-soft)", marginTop: 12, maxWidth: "56ch" }}>
             Prix indicatifs — ils varient selon l&apos;arrivage. {D.tireuse.retrait}.
-            Caution : {D.tireuse.caution}.
           </p>
 
           <div className="chips" style={{ marginTop: 24 }}>
@@ -269,24 +228,8 @@ export default function TireusePage() {
                       <input name="date" type="date" required />
                     </div>
                     <div className="field">
-                      <label>Forfait souhaité</label>
-                      <select name="forfait">
-                        <option>Week-end</option>
-                        <option>Semaine</option>
-                        <option>Événement (+100 pers.)</option>
-                      </select>
-                    </div>
-                    <div className="field">
                       <label>Nombre d&apos;invités</label>
                       <input name="invites" type="number" min="1" placeholder="ex : 50" />
-                    </div>
-                    <div className="field">
-                      <label>Durée</label>
-                      <select name="duree">
-                        <option>Week-end (ven → dim)</option>
-                        <option>Une semaine</option>
-                        <option>Plus longtemps</option>
-                      </select>
                     </div>
                     <div className="field full">
                       <label>Message</label>

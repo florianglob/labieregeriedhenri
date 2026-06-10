@@ -7,7 +7,6 @@ import ScrollAnimations from "@/components/ScrollAnimations";
 import { BASE_DATA, primaryPrice } from "@/lib/data";
 import BeerVisual from "@/components/BeerVisual";
 import { loadAdminData } from "@/lib/supabase";
-
 export const revalidate = 60;
 
 function semaineLabel(): string {
@@ -233,6 +232,112 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ===== MIDI + TIREUSE ===== */}
+      <section id="midi-tireuse">
+        <div className="wrap">
+          <div className="section-head">
+            <div className="left">
+              <span className="eyebrow">Le menu du midi</span>
+              <h2 style={{ marginTop: 14 }}>
+                Ce midi,{" "}
+                <span className="scripted" style={{ fontSize: 58 }}>qu&apos;est-ce qu&apos;on mange ?</span>
+              </h2>
+            </div>
+          </div>
+
+          <div className="split" data-anim>
+            {/* Ardoise du midi */}
+            <div className="chalkboard">
+              <div className="chalk-title">{semaineLabel()}</div>
+              <div className="chalk-sub">— servi de 12h à 14h · du mardi au vendredi —</div>
+
+              <div className="chalk-divider" />
+              {m.formules.map((f) => (
+                <div key={f.nom} className="chalk-row">
+                  <span className="name">{f.nom}</span>
+                  <span className="dots" />
+                  <span className="price">{f.prix}</span>
+                </div>
+              ))}
+
+              <div style={{ textAlign: "center", marginTop: 18 }}>
+                <Link href="/midi" className="btn btn-primary">
+                  Le menu en entier
+                </Link>
+              </div>
+            </div>
+
+            {/* Instagram CTA */}
+            <a
+              href={D.contact.instagram}
+              target="_blank"
+              rel="noreferrer"
+              className="formules mob-hide"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                gap: 18,
+                textDecoration: "none",
+                transition: "transform .2s, box-shadow .2s",
+              }}
+            >
+              {/* Icône grande */}
+              <div style={{
+                width: 76, height: 76,
+                background: "linear-gradient(135deg, #f09433 0%, #e6683c 30%, #dc2743 60%, #bc1888 100%)",
+                borderRadius: 22,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: "0 8px 28px rgba(220,39,67,.32)",
+                flexShrink: 0,
+              }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                  <circle cx="12" cy="12" r="4"/>
+                  <circle cx="17.5" cy="6.5" r="1.2" fill="white" stroke="none"/>
+                </svg>
+              </div>
+
+              {/* Texte */}
+              <div>
+                <div style={{ fontWeight: 800, fontSize: 22, color: "var(--brun-dark)", lineHeight: 1.2, marginBottom: 8, fontFamily: "var(--font-display)" }}>
+                  Suivez-nous<br />sur Instagram
+                </div>
+                <div style={{ color: "var(--encre-soft)", fontSize: 14, lineHeight: 1.65 }}>
+                  Bières du moment, ambiance<br />et actus — tout en direct.
+                </div>
+              </div>
+
+              {/* Handle */}
+              <div style={{
+                fontWeight: 700, fontSize: 13,
+                background: "linear-gradient(135deg, #e6683c, #bc1888)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                letterSpacing: ".02em",
+              }}>
+                @la_bieregerie_dhenri
+              </div>
+
+              {/* CTA */}
+              <div style={{
+                background: "linear-gradient(135deg, #f09433, #e6683c, #dc2743, #bc1888)",
+                color: "white",
+                fontWeight: 700,
+                fontSize: 15,
+                padding: "12px 28px",
+                borderRadius: 999,
+                boxShadow: "0 4px 16px rgba(220,39,67,.35)",
+              }}>
+                Voir le profil →
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ===== CETTE SEMAINE ===== */}
       <section style={{ background: "var(--papier-warm)" }}>
         <div className="wrap">
@@ -279,85 +384,6 @@ export default async function Home() {
                 </div>
               </Link>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ===== MIDI + TIREUSE ===== */}
-      <section id="midi-tireuse">
-        <div className="wrap">
-          <div className="section-head">
-            <div className="left">
-              <span className="eyebrow mob-hide">Le midi · La tireuse</span>
-              <span className="eyebrow desk-hide">Le menu du midi</span>
-              <h2 style={{ marginTop: 14 }}>
-                <span className="mob-hide">Deux bonnes raisons{" "}
-                <span className="scripted" style={{ fontSize: 58 }}>de revenir</span></span>
-                <span className="desk-hide">Ce midi,{" "}
-                <span className="scripted" style={{ fontSize: 58 }}>qu&apos;est-ce qu&apos;on mange ?</span></span>
-              </h2>
-            </div>
-          </div>
-
-          <div className="split" data-anim>
-            {/* Ardoise du midi */}
-            <div className="chalkboard">
-              <div className="chalk-title">{semaineLabel()}</div>
-              <div className="chalk-sub">— servi de 12h à 14h · du mardi au vendredi —</div>
-
-              <div className="chalk-divider" />
-              {m.formules.map((f) => (
-                <div key={f.nom} className="chalk-row">
-                  <span className="name">{f.nom}</span>
-                  <span className="dots" />
-                  <span className="price">{f.prix}</span>
-                </div>
-              ))}
-
-              <div style={{ textAlign: "center", marginTop: 18 }}>
-                <Link href="/midi" className="btn btn-primary">
-                  Le menu en entier
-                </Link>
-              </div>
-            </div>
-
-            {/* Forfaits tireuse */}
-            <div className="formules mob-hide">
-              <span className="tag-line">Tireuse 2 becs · à retirer chez nous</span>
-              <h3>La pression à emporter</h3>
-              <p style={{ color: "var(--encre-soft)", margin: "12px 0 4px" }}>
-                Anniversaire, mariage, pot de départ — choisis ton forfait et tes fûts,
-                tu viens récupérer le matos.
-              </p>
-
-              {D.forfaits.map((f) => (
-                <div key={f.id} className={`formule-item${f.featured ? " featured" : ""}`}>
-                  <div
-                    className="icon"
-                    style={f.featured ? { background: "var(--dore)", color: "var(--brun-dark)" } : {}}
-                  >
-                    {f.featured ? "★" : f.nom.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="name">
-                      {f.nom}
-                      {f.featured && <span className="badge-pop">Le + demandé</span>}
-                    </div>
-                    <div className="desc">{f.kicker} · {f.addon.toLowerCase()}</div>
-                  </div>
-                  <div className="price">{f.base.replace("à partir de ", "dès ")}</div>
-                </div>
-              ))}
-
-              <div style={{ marginTop: 24, display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <Link href="/tireuse" className="btn btn-primary">
-                  Voir les forfaits <span className="arrow">→</span>
-                </Link>
-                <Link href="/tireuse#devis" className="btn btn-secondary">
-                  Demander un devis
-                </Link>
-              </div>
-            </div>
           </div>
         </div>
       </section>

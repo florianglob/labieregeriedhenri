@@ -30,6 +30,7 @@ function dbToBeer(r: Row): Beer {
     deg: r.deg as string,
     format: r.format as Beer["format"],
     coup: r.coup as boolean | undefined,
+    actif: r.actif as boolean,
     note: r.note as string,
     prix: r.prix as Record<string, string>,
     photo: r.photo as string | undefined,
@@ -38,7 +39,7 @@ function dbToBeer(r: Row): Beer {
 }
 
 function beerToDb(b: Beer, position: number): Row {
-  return {
+  const row: Row = {
     nom: b.nom,
     brasserie: b.brasserie,
     style: b.style,
@@ -51,9 +52,12 @@ function beerToDb(b: Beer, position: number): Row {
     prix: b.prix,
     photo: b.photo ?? null,
     details: b.details ?? {},
-    actif: true,
+    actif: b.actif ?? true,
     position,
   };
+  // inclure l'id seulement pour les bières existantes (id DB, pas un Date.now() temporaire)
+  if (b.id && b.id < 1_000_000_000) row.id = b.id;
+  return row;
 }
 
 function dbToEvent(r: Row): Evenement {
@@ -127,11 +131,18 @@ function dbToBoisson(r: Row): Boisson {
 
 // ---- Chargement complet (admin + pages publiques) ----
 
-export async function loadAdminData(): Promise<SiteData> {
+export async function loadAdminData(adminMode = false): Promise<SiteData> {
+  const today = new Date().toISOString().split("T")[0];
+  const beersQuery = adminMode
+    ? supabase.from("beers").select("*").order("position")
+    : supabase.from("beers").select("*").eq("actif", true).order("position");
+  const eventsQuery = adminMode
+    ? supabase.from("evenements").select("*").eq("actif", true).order("date_event")
+    : supabase.from("evenements").select("*").eq("actif", true).gte("date_event", today).order("date_event");
   const [beersR, eventsR, menuR, horairesR, forfaitsR, futsR, boissonsR, configR] =
     await Promise.all([
-      supabase.from("beers").select("*").eq("actif", true).order("position"),
-      supabase.from("evenements").select("*").eq("actif", true).gte("date_event", new Date().toISOString().split("T")[0]).order("date_event"),
+      beersQuery,
+      eventsQuery,
       supabase.from("menu_semaine").select("*").eq("actif", true).order("id", { ascending: false }).limit(1),
       supabase.from("horaires").select("*").order("position"),
       supabase.from("forfaits").select("*").order("position"),
@@ -144,18 +155,7 @@ export async function loadAdminData(): Promise<SiteData> {
     !r.error && (r.data?.length ?? 0) > 0 ? r.data! : fallback;
 
   const beers = orBase(beersR, BASE_DATA.bieres).map(dbToBeer);
-  const today = new Date().toISOString().split("T")[0];
-  const allEvents = (!eventsR.error && (eventsR.data?.length ?? 0) > 0
-    ? eventsR.data!.map(dbToEvent)
-    : BASE_DATA.evenementsAvenir);
-  const evenements = allEvents.filter((e) => {
-    let eventDate = e.dateStr;
-    if (!eventDate) {
-      const month = MOIS_FR[e.mois.toLowerCase()] ?? 1;
-      eventDate = `2026-${String(month).padStart(2, "0")}-${String(e.jour).padStart(2, "0")}`;
-    }
-    return eventDate >= today;
-  });
+  const evenements = orBase(eventsR, BASE_DATA.evenementsAvenir).map(dbToEvent);
   const menu =
     !menuR.error && (menuR.data?.length ?? 0) > 0
       ? dbToMenu(menuR.data![0] as Row)
@@ -184,105 +184,54 @@ export async function loadAdminData(): Promise<SiteData> {
 
 // ---- Fonctions de sauvegarde par table ----
 
-export async function saveBeers(beers: Beer[]): Promise<void> {
-  await supabase.from("beers").delete().gte("id", 0);
-  if (!beers.length) return;
-  const { error } = await supabase.from("beers").insert(beers.map(beerToDb));
-  if (error) throw error;
+// ---- Helper : toutes les écritures admin passent par la route API (service role, bypass RLS) ----
+
+async function adminSave(type: string, payload: unknown): Promise<unknown> {
+  const { data: { session } } = await supabase.auth.getSession();
+  const res = await fetch("/api/admin/save", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(session?.access_token ? { "Authorization": `Bearer ${session.access_token}` } : {}),
+    },
+    body: JSON.stringify({ type, payload }),
+  });
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.error ?? "Erreur de sauvegarde");
+  return result;
 }
 
-export const MOIS_FR: Record<string, number> = {
-  janvier: 1, février: 2, mars: 3, avril: 4, mai: 5, juin: 6,
-  juillet: 7, août: 8, septembre: 9, octobre: 10, novembre: 11, décembre: 12,
-};
+export async function saveBeers(beers: Beer[]): Promise<Beer[]> {
+  const result = await adminSave("beers", beers) as { beers: Row[] };
+  return (result.beers ?? []).map(dbToBeer);
+}
 
 export async function saveEvenements(evs: Evenement[]): Promise<void> {
-  await supabase.from("evenements").delete().gte("id", 0);
-  if (!evs.length) return;
-  const rows = evs.map((e) => {
-    let date_event = e.dateStr;
-    if (!date_event) {
-      const month = MOIS_FR[e.mois.toLowerCase()] ?? 1;
-      date_event = `2026-${String(month).padStart(2, "0")}-${String(e.jour).padStart(2, "0")}`;
-    }
-    return { titre: e.titre, tag: e.tag, date_event, heure: e.heure, description: e.desc, photo: e.photo ?? null, actif: true };
-  });
-  const { error } = await supabase.from("evenements").insert(rows);
-  if (error) throw error;
+  await adminSave("evenements", evs);
 }
 
 export async function saveMenu(menu: MenuSemaine): Promise<void> {
-  await supabase.from("menu_semaine").update({ actif: false }).eq("actif", true);
-  const { error } = await supabase.from("menu_semaine").insert({
-    semaine: menu.semaine,
-    entrees: menu.entrees,
-    plats: menu.plats,
-    desserts: menu.desserts,
-    dessert_du_jour: menu.dessertDuJour,
-    formules: menu.formules,
-    accord: menu.accord,
-    actif: true,
-  });
-  if (error) throw error;
+  await adminSave("menu", menu);
 }
 
 export async function saveHoraires(horaires: SiteData["horaires"]): Promise<void> {
-  await supabase.from("horaires").delete().gte("id", 0);
-  if (!horaires.length) return;
-  const { error } = await supabase
-    .from("horaires")
-    .insert(horaires.map((h, i) => ({ jour: h.jour, heure: h.hr, ferme: h.closed ?? false, position: i })));
-  if (error) throw error;
+  await adminSave("horaires", horaires);
 }
 
 export async function saveForfaits(forfaits: Forfait[]): Promise<void> {
-  const { error } = await supabase.from("forfaits").upsert(
-    forfaits.map((f, i) => ({
-      id: f.id,
-      nom: f.nom,
-      kicker: f.kicker,
-      base: f.base,
-      description: f.desc,
-      inclus: f.inclus,
-      featured: f.featured,
-      addon: f.addon,
-      position: i,
-    }))
-  );
-  if (error) throw error;
+  await adminSave("forfaits", forfaits);
 }
 
 export async function saveFuts(futs: Fut[]): Promise<void> {
-  await supabase.from("futs").delete().gte("id", 0);
-  if (!futs.length) return;
-  const { error } = await supabase.from("futs").insert(
-    futs.map((f) => ({ nom: f.nom, style: f.style, brasserie: f.brasserie, volume: f.vol, prix: f.prix, actif: true }))
-  );
-  if (error) throw error;
+  await adminSave("futs", futs);
 }
 
 export async function saveBoissons(boissons: Boisson[]): Promise<void> {
-  await supabase.from("boissons").delete().gte("id", 0);
-  if (!boissons.length) return;
-  const { error } = await supabase.from("boissons").insert(
-    boissons.map((b, i) => ({
-      nom: b.nom,
-      categorie: b.categorie,
-      description: b.description ?? null,
-      origine: b.origine ?? null,
-      prix: b.prix,
-      actif: true,
-      position: i,
-    }))
-  );
-  if (error) throw error;
+  await adminSave("boissons", boissons);
 }
 
 export async function saveSiteConfig(patch: Record<string, unknown>): Promise<void> {
-  const { data: existing } = await supabase.from("site_config").select("data").eq("id", 1).single();
-  const current = (existing?.data as Record<string, unknown>) ?? {};
-  const { error } = await supabase.from("site_config").upsert({ id: 1, data: { ...current, ...patch } });
-  if (error) throw error;
+  await adminSave("config", patch);
 }
 
 export async function seedAllData(data: SiteData): Promise<void> {
