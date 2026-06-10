@@ -8,8 +8,6 @@ import EventModal from "@/components/EventModal";
 import { BASE_DATA, SiteData, Evenement } from "@/lib/data";
 import { loadAdminData } from "@/lib/supabase";
 
-const MONTHS = ["Mai 2026", "Juin 2026"];
-
 export default function EvenementsPage() {
   const [D, setD] = useState<SiteData>(BASE_DATA);
   useEffect(() => { loadAdminData().then(setD).catch(() => {}); }, []);
@@ -18,6 +16,11 @@ export default function EvenementsPage() {
   const [selected, setSelected] = useState<Evenement | null>(null);
 
   const allTags = ["Toutes", ...Array.from(new Set(D.evenementsAvenir.map((e) => e.tag)))];
+
+  const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  const currentMonthLabel = cap(new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" }));
+  const eventMonths = Array.from(new Set(D.evenementsAvenir.map((e) => e.moisFull)));
+  const MONTHS = eventMonths.length > 0 ? eventMonths : [currentMonthLabel];
 
   const filtered = D.evenementsAvenir.filter((e) => {
     const matchTag = activeTag === "Toutes" || e.tag === activeTag;
