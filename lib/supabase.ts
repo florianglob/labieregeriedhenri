@@ -131,7 +131,7 @@ export async function loadAdminData(): Promise<SiteData> {
   const [beersR, eventsR, menuR, horairesR, forfaitsR, futsR, boissonsR, configR] =
     await Promise.all([
       supabase.from("beers").select("*").eq("actif", true).order("position"),
-      supabase.from("evenements").select("*").eq("actif", true).order("date_event"),
+      supabase.from("evenements").select("*").eq("actif", true).gte("date_event", new Date().toISOString().split("T")[0]).order("date_event"),
       supabase.from("menu_semaine").select("*").eq("actif", true).order("id", { ascending: false }).limit(1),
       supabase.from("horaires").select("*").order("position"),
       supabase.from("forfaits").select("*").order("position"),
@@ -144,7 +144,18 @@ export async function loadAdminData(): Promise<SiteData> {
     !r.error && (r.data?.length ?? 0) > 0 ? r.data! : fallback;
 
   const beers = orBase(beersR, BASE_DATA.bieres).map(dbToBeer);
-  const evenements = orBase(eventsR, BASE_DATA.evenementsAvenir).map(dbToEvent);
+  const today = new Date().toISOString().split("T")[0];
+  const allEvents = (!eventsR.error && (eventsR.data?.length ?? 0) > 0
+    ? eventsR.data!.map(dbToEvent)
+    : BASE_DATA.evenementsAvenir);
+  const evenements = allEvents.filter((e) => {
+    let eventDate = e.dateStr;
+    if (!eventDate) {
+      const month = MOIS_FR[e.mois.toLowerCase()] ?? 1;
+      eventDate = `2026-${String(month).padStart(2, "0")}-${String(e.jour).padStart(2, "0")}`;
+    }
+    return eventDate >= today;
+  });
   const menu =
     !menuR.error && (menuR.data?.length ?? 0) > 0
       ? dbToMenu(menuR.data![0] as Row)
@@ -180,7 +191,7 @@ export async function saveBeers(beers: Beer[]): Promise<void> {
   if (error) throw error;
 }
 
-const MOIS_FR: Record<string, number> = {
+export const MOIS_FR: Record<string, number> = {
   janvier: 1, février: 2, mars: 3, avril: 4, mai: 5, juin: 6,
   juillet: 7, août: 8, septembre: 9, octobre: 10, novembre: 11, décembre: 12,
 };
