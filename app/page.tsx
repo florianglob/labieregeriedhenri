@@ -267,73 +267,26 @@ export default async function Home() {
               </div>
             </div>
 
-            {/* Instagram CTA */}
-            <a
-              href={D.contact.instagram}
-              target="_blank"
-              rel="noreferrer"
+            {/* Photo plats midi */}
+            <div
               className="formules mob-hide"
               style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                textAlign: "center",
-                gap: 18,
-                textDecoration: "none",
-                transition: "transform .2s, box-shadow .2s",
+                padding: 0,
+                overflow: "hidden",
               }}
             >
-              {/* Icône grande */}
-              <div style={{
-                width: 76, height: 76,
-                background: "linear-gradient(135deg, #f09433 0%, #e6683c 30%, #dc2743 60%, #bc1888 100%)",
-                borderRadius: 22,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                boxShadow: "0 8px 28px rgba(220,39,67,.32)",
-                flexShrink: 0,
-              }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                  <circle cx="12" cy="12" r="4"/>
-                  <circle cx="17.5" cy="6.5" r="1.2" fill="white" stroke="none"/>
-                </svg>
-              </div>
-
-              {/* Texte */}
-              <div>
-                <div style={{ fontWeight: 800, fontSize: 22, color: "var(--brun-dark)", lineHeight: 1.2, marginBottom: 8, fontFamily: "var(--font-display)" }}>
-                  Suivez-nous<br />sur Instagram
-                </div>
-                <div style={{ color: "var(--encre-soft)", fontSize: 14, lineHeight: 1.65 }}>
-                  Bières du moment, ambiance<br />et actus — tout en direct.
-                </div>
-              </div>
-
-              {/* Handle */}
-              <div style={{
-                fontWeight: 700, fontSize: 13,
-                background: "linear-gradient(135deg, #e6683c, #bc1888)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                letterSpacing: ".02em",
-              }}>
-                @la_bieregerie_dhenri
-              </div>
-
-              {/* CTA */}
-              <div style={{
-                background: "linear-gradient(135deg, #f09433, #e6683c, #dc2743, #bc1888)",
-                color: "white",
-                fontWeight: 700,
-                fontSize: 15,
-                padding: "12px 28px",
-                borderRadius: 999,
-                boxShadow: "0 4px 16px rgba(220,39,67,.35)",
-              }}>
-                Voir le profil →
-              </div>
-            </a>
+              <img
+                src="/assets/plats-midi.jpg"
+                alt="Les plats du midi à la Biéregerie"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  display: "block",
+                  borderRadius: "var(--radius-lg)",
+                }}
+              />
+            </div>
           </div>
         </div>
       </section>
