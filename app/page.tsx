@@ -7,6 +7,7 @@ import ScrollAnimations from "@/components/ScrollAnimations";
 import { BASE_DATA, primaryPrice } from "@/lib/data";
 import BeerVisual from "@/components/BeerVisual";
 import { loadAdminData } from "@/lib/supabase";
+import HomeEvents from "@/components/HomeEvents";
 export const revalidate = 60;
 
 function semaineLabel(): string {
@@ -307,37 +308,7 @@ export default async function Home() {
               Tout l&apos;agenda <span className="arrow">→</span>
             </Link>
           </div>
-          <div className="events-grid">
-            {D.evenementsAvenir.slice(0, 3).map((e, i) => (
-              <Link key={e.id} className="event-card" href={`/evenements#ev-${e.id}`}>
-                <div className="img" data-anim="fade" style={{ transitionDelay: `${i * 100}ms` }}>
-                  <span className="tag">{e.tag}</span>
-                  <span className="date">
-                    <span className="d">{e.jour}</span>
-                    <span className="m">{e.mois}</span>
-                  </span>
-                  {e.photo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={e.photo} alt={e.titre} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  ) : (
-                    <div className="ph">
-                      <div className="ph-inner">
-                        <span className="ph-tag">PHOTO ÉVÉNEMENT</span>
-                        <span className="ph-dim">800×800 · {e.tag.toLowerCase()}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className="body">
-                  <h4>{e.titre}</h4>
-                  <div className="meta-line">
-                    <span>● {e.heure}</span>
-                    <span>{e.desc}</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <HomeEvents events={D.evenementsAvenir.slice(0, 3)} />
         </div>
       </section>
 

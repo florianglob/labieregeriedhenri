@@ -126,7 +126,7 @@ export default function EvenementsPage() {
                     <div className="meta-line">
                       <span>● {e.heure}</span>
                     </div>
-                    <p style={{ fontSize: 14, color: "var(--encre-soft)", margin: "8px 0 12px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                    <p style={{ fontSize: 14, color: "var(--encre-soft)", margin: "8px 0 12px", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden", whiteSpace: "pre-line" }}>
                       {e.desc}
                     </p>
                     <button className="btn btn-primary btn-sm" onClick={(ev) => { ev.stopPropagation(); setSelected(e); }}>

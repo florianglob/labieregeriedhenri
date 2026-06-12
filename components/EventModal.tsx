@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Evenement } from "@/lib/data";
 
 interface Props {
@@ -9,6 +9,9 @@ interface Props {
 }
 
 export default function EventModal({ event: e, onClose }: Props) {
+  const imgRef = useRef<HTMLImageElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
     const handler = (ev: KeyboardEvent) => { if (ev.key === "Escape") onClose(); };
@@ -18,6 +21,13 @@ export default function EventModal({ event: e, onClose }: Props) {
       document.removeEventListener("keydown", handler);
     };
   }, [onClose]);
+
+  const syncBodyHeight = () => {
+    if (imgRef.current && bodyRef.current) {
+      const h = imgRef.current.offsetHeight;
+      if (h > 0) bodyRef.current.style.maxHeight = `${h}px`;
+    }
+  };
 
   const paragraphs = e.desc.split(/\n+/).filter(Boolean);
 
@@ -34,7 +44,7 @@ export default function EventModal({ event: e, onClose }: Props) {
           <div className="ev-modal-img">
             {e.photo ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={e.photo} alt={e.titre} />
+              <img ref={imgRef} src={e.photo} alt={e.titre} onLoad={syncBodyHeight} />
             ) : (
               <div className="ev-modal-img-ph">
                 <span className="ev-modal-date-big">
@@ -53,7 +63,7 @@ export default function EventModal({ event: e, onClose }: Props) {
           </div>
 
           {/* Contenu */}
-          <div className="ev-modal-body">
+          <div ref={bodyRef} className="ev-modal-body">
             <div className="ev-modal-eyebrow">{e.tag}</div>
             <h2 className="ev-modal-title">{e.titre}</h2>
 
