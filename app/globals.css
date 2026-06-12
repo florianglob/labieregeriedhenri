@@ -1387,7 +1387,7 @@ h1 .scripted, h2 .scripted, h3 .scripted {
 @media (max-width: 640px) {
   .ev-modal-layout { grid-template-columns: 1fr; overflow: visible; max-height: none; }
   .ev-modal { overflow-y: auto; }
-  .ev-modal-img { min-height: 200px; max-height: 240px; }
+  .ev-modal-img { position: relative; }
   .ev-modal-body { padding: 24px 20px 20px; overflow-y: visible; }
   .ev-modal-title { font-size: 22px; }
   .ev-modal-footer { flex-direction: column; align-items: stretch; }

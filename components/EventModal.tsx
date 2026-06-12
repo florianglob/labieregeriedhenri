@@ -24,8 +24,12 @@ export default function EventModal({ event: e, onClose }: Props) {
 
   const syncBodyHeight = () => {
     if (imgRef.current && bodyRef.current) {
-      const h = imgRef.current.offsetHeight;
-      if (h > 0) bodyRef.current.style.maxHeight = `${h}px`;
+      if (window.innerWidth > 640) {
+        const h = imgRef.current.offsetHeight;
+        if (h > 0) bodyRef.current.style.maxHeight = `${h}px`;
+      } else {
+        bodyRef.current.style.maxHeight = "";
+      }
     }
   };
 
